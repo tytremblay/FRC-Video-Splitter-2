@@ -1,0 +1,12 @@
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.exe.config
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.exe
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.pdb
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\Newtonsoft.Json.dll
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\Newtonsoft.Json.xml
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csprojResolveAssemblyReference.cache
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.Form1.resources
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.Properties.Resources.resources
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.SettingsForm.resources
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csproj.GenerateResource.Cache
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.exe
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.pdb
