@@ -58,5 +58,41 @@ namespace FRCVideoSplitter2.Properties {
                 this["eventCode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool useManualTimeStamps {
+            get {
+                return ((bool)(this["useManualTimeStamps"]));
+            }
+            set {
+                this["useManualTimeStamps"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:03:00")]
+        public string matchLength {
+            get {
+                return ((string)(this["matchLength"]));
+            }
+            set {
+                this["matchLength"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string eventName {
+            get {
+                return ((string)(this["eventName"]));
+            }
+            set {
+                this["eventName"] = value;
+            }
+        }
     }
 }

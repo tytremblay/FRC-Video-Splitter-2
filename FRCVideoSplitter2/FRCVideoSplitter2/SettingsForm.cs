@@ -24,7 +24,9 @@ namespace FRCVideoSplitter2
 
             Properties.Settings.Default.eventsJsonString = events;
 
-            Properties.Settings.Default.Save();           
+            Properties.Settings.Default.Save();
+
+            MessageBox.Show("Data successfully refreshed.");
             
         }
 
@@ -47,6 +49,13 @@ namespace FRCVideoSplitter2
         private void SettingsForm_Load(object sender, EventArgs e)
         {
             this.yearBox.Text = Properties.Settings.Default.year.ToString();
+        }
+
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.matchLength = matchLengthBox.Text;
+            Properties.Settings.Default.Save();
+            this.Close();
         }
     }
 }

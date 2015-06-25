@@ -43,6 +43,19 @@
             this.eventCodeBox = new System.Windows.Forms.TextBox();
             this.getMatchDataButton = new System.Windows.Forms.Button();
             this.matchesDataGridView = new System.Windows.Forms.DataGridView();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.getTimestampButton = new System.Windows.Forms.Button();
+            this.matchVideoBrowseButton = new System.Windows.Forms.Button();
+            this.sourceVideoBrowseButton = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.matchVideoDestinationPathTextBox = new System.Windows.Forms.TextBox();
+            this.sourceVideoPathTextBox = new System.Windows.Forms.TextBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.splitVideosButton = new System.Windows.Forms.Button();
+            this.uploadToYouTubeButton = new System.Windows.Forms.Button();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.matchesDataGridView)).BeginInit();
             this.SuspendLayout();
@@ -167,17 +180,140 @@
             // 
             // matchesDataGridView
             // 
+            this.matchesDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.matchesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.matchesDataGridView.Location = new System.Drawing.Point(423, 12);
+            this.matchesDataGridView.Location = new System.Drawing.Point(423, 33);
             this.matchesDataGridView.Name = "matchesDataGridView";
-            this.matchesDataGridView.Size = new System.Drawing.Size(713, 588);
+            this.matchesDataGridView.Size = new System.Drawing.Size(713, 567);
             this.matchesDataGridView.TabIndex = 9;
+            this.matchesDataGridView.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.matchesDataGridView_CellMouseDown);
+            this.matchesDataGridView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.matchesDataGridView_CellMouseUp);
+            this.matchesDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.matchesDataGridView_CellValueChanged);
+            this.matchesDataGridView.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.matchesDataGridView_DataError);
+            this.matchesDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.matchesDataGridView_MouseClick);
+            this.matchesDataGridView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.matchesDataGridView_MouseUp);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(253, 210);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(147, 17);
+            this.checkBox1.TabIndex = 10;
+            this.checkBox1.Text = "Use Manual Time Stamps";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // getTimestampButton
+            // 
+            this.getTimestampButton.Location = new System.Drawing.Point(12, 200);
+            this.getTimestampButton.Name = "getTimestampButton";
+            this.getTimestampButton.Size = new System.Drawing.Size(225, 34);
+            this.getTimestampButton.TabIndex = 11;
+            this.getTimestampButton.Text = "Get Timestamps";
+            this.getTimestampButton.UseVisualStyleBackColor = true;
+            this.getTimestampButton.Click += new System.EventHandler(this.getTimestampButton_Click);
+            // 
+            // matchVideoBrowseButton
+            // 
+            this.matchVideoBrowseButton.Location = new System.Drawing.Point(336, 150);
+            this.matchVideoBrowseButton.Name = "matchVideoBrowseButton";
+            this.matchVideoBrowseButton.Size = new System.Drawing.Size(75, 23);
+            this.matchVideoBrowseButton.TabIndex = 16;
+            this.matchVideoBrowseButton.Text = "Browse";
+            this.matchVideoBrowseButton.UseVisualStyleBackColor = true;
+            this.matchVideoBrowseButton.Click += new System.EventHandler(this.matchVideoBrowseButton_Click);
+            // 
+            // sourceVideoBrowseButton
+            // 
+            this.sourceVideoBrowseButton.Location = new System.Drawing.Point(336, 124);
+            this.sourceVideoBrowseButton.Name = "sourceVideoBrowseButton";
+            this.sourceVideoBrowseButton.Size = new System.Drawing.Size(75, 23);
+            this.sourceVideoBrowseButton.TabIndex = 17;
+            this.sourceVideoBrowseButton.Text = "Browse";
+            this.sourceVideoBrowseButton.UseVisualStyleBackColor = true;
+            this.sourceVideoBrowseButton.Click += new System.EventHandler(this.sourceVideoBrowseButton_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(11, 156);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(123, 13);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Match Video Destination";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(11, 130);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(115, 13);
+            this.label3.TabIndex = 15;
+            this.label3.Text = "Source Video Location";
+            // 
+            // matchVideoDestinationPathTextBox
+            // 
+            this.matchVideoDestinationPathTextBox.Location = new System.Drawing.Point(132, 152);
+            this.matchVideoDestinationPathTextBox.Name = "matchVideoDestinationPathTextBox";
+            this.matchVideoDestinationPathTextBox.Size = new System.Drawing.Size(198, 20);
+            this.matchVideoDestinationPathTextBox.TabIndex = 12;
+            this.matchVideoDestinationPathTextBox.Text = "Click Browse...";
+            // 
+            // sourceVideoPathTextBox
+            // 
+            this.sourceVideoPathTextBox.Location = new System.Drawing.Point(132, 126);
+            this.sourceVideoPathTextBox.Name = "sourceVideoPathTextBox";
+            this.sourceVideoPathTextBox.Size = new System.Drawing.Size(198, 20);
+            this.sourceVideoPathTextBox.TabIndex = 13;
+            this.sourceVideoPathTextBox.Text = "Click Browse...";
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // splitVideosButton
+            // 
+            this.splitVideosButton.Location = new System.Drawing.Point(12, 253);
+            this.splitVideosButton.Name = "splitVideosButton";
+            this.splitVideosButton.Size = new System.Drawing.Size(399, 34);
+            this.splitVideosButton.TabIndex = 18;
+            this.splitVideosButton.Text = "SPLIT VIDEOS";
+            this.splitVideosButton.UseVisualStyleBackColor = true;
+            this.splitVideosButton.Click += new System.EventHandler(this.splitVideosButton_Click);
+            // 
+            // uploadToYouTubeButton
+            // 
+            this.uploadToYouTubeButton.Location = new System.Drawing.Point(12, 566);
+            this.uploadToYouTubeButton.Name = "uploadToYouTubeButton";
+            this.uploadToYouTubeButton.Size = new System.Drawing.Size(399, 34);
+            this.uploadToYouTubeButton.TabIndex = 18;
+            this.uploadToYouTubeButton.Text = "Upload To YouTube";
+            this.uploadToYouTubeButton.UseVisualStyleBackColor = true;
+            this.uploadToYouTubeButton.Click += new System.EventHandler(this.uploadToYouTubeButton_Click);
+            // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1148, 612);
+            this.Controls.Add(this.uploadToYouTubeButton);
+            this.Controls.Add(this.splitVideosButton);
+            this.Controls.Add(this.matchVideoBrowseButton);
+            this.Controls.Add(this.sourceVideoBrowseButton);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.matchVideoDestinationPathTextBox);
+            this.Controls.Add(this.sourceVideoPathTextBox);
+            this.Controls.Add(this.getTimestampButton);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.matchesDataGridView);
             this.Controls.Add(this.getMatchDataButton);
             this.Controls.Add(this.label2);
@@ -216,6 +352,19 @@
         private System.Windows.Forms.TextBox eventCodeBox;
         private System.Windows.Forms.Button getMatchDataButton;
         private System.Windows.Forms.DataGridView matchesDataGridView;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button getTimestampButton;
+        private System.Windows.Forms.Button matchVideoBrowseButton;
+        private System.Windows.Forms.Button sourceVideoBrowseButton;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox matchVideoDestinationPathTextBox;
+        private System.Windows.Forms.TextBox sourceVideoPathTextBox;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.Button splitVideosButton;
+        private System.Windows.Forms.Button uploadToYouTubeButton;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 
