@@ -12,6 +12,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Reflection;
 using Google.Apis.YouTube.v3.Data;
+using Google.Apis.Upload;
 
 namespace FRCVideoSplitter2
 {
@@ -40,16 +41,16 @@ namespace FRCVideoSplitter2
         private void Form1_Load(object sender, EventArgs e)
         {
             updateObjects();
+
+            uploader.Upload_ProgressChanged += new EventHandler<long>(vid_ProgressChanged);
+            uploader.UploadCompleted += new EventHandler<string>(vid_UploadCompleted);
+            uploader.Upload_Failed += new EventHandler<string>(vid_UploadFailed);
             
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
-
-            uploader.Upload_ProgressChanged += new EventHandler<long>(vid_ProgressChanged);
-            uploader.UploadCompleted += new EventHandler<string>(vid_UploadCompleted);
-            uploader.Upload_Failed += new EventHandler<string>(vid_UploadFailed);
         }
 
         /// <summary>
@@ -377,8 +378,11 @@ namespace FRCVideoSplitter2
             }
 
             DataGridViewRow firstRow = getFirstIncludedMatchRow();
-            firstRow.Cells["TimeStamp"].ReadOnly = false;
-            firstRow.Cells["TimeStamp"].Style.BackColor = Color.White;
+            if (firstRow != null)
+            {
+                firstRow.Cells["TimeStamp"].ReadOnly = false;
+                firstRow.Cells["TimeStamp"].Style.BackColor = Color.White;
+            }
         }
 
         /// <summary>
@@ -392,6 +396,8 @@ namespace FRCVideoSplitter2
             if (result == DialogResult.OK)
             {
                 sourceVideoPathTextBox.Text = openFileDialog1.FileName;
+                Properties.Settings.Default.sourceVideoLocation = sourceVideoPathTextBox.Text;
+                Properties.Settings.Default.Save();
             }
         }
 
@@ -406,6 +412,26 @@ namespace FRCVideoSplitter2
             if (result == DialogResult.OK)
             {
                 matchVideoDestinationPathTextBox.Text = folderBrowserDialog1.SelectedPath;
+                Properties.Settings.Default.matchVideoDestination = matchVideoDestinationPathTextBox.Text;
+                Properties.Settings.Default.Save();
+            }
+
+            // Might as well go through that directory and see if someone has already split some of the matches out.
+            DirectoryInfo di = new DirectoryInfo(Properties.Settings.Default.matchVideoDestination);
+            FileInfo[] fiArr = di.GetFiles();
+
+            string[] stringSeparators = new string[] {" - "};
+
+            foreach (FileInfo f in fiArr)
+            {
+                string[] splitArr = f.Name.Split(stringSeparators,StringSplitOptions.None);
+                if (splitArr.Count() > 1)
+                {
+                    if (splitArr[1].StartsWith(Properties.Settings.Default.eventName))
+                    {
+                        matchesList.First(m => m.Description == splitArr[0]).VideoPath = f.FullName;
+                    }
+                }
             }
         }
 
@@ -428,7 +454,7 @@ namespace FRCVideoSplitter2
 
             foreach (SplitterTypes.Match match in includedMatches)
             {
-                progress.SetText("Splitting video " + (completed + 1) + " of " + matchesDataGridView.Rows.Count);
+                progress.SetText("Splitting video " + (completed + 1) + " of " + matchesList.Where(i => i.Include == true).ToList().Count);
                 string startTime = match.TimeStamp.ToString("HH:mm:ss.fff");
                 string videoName = match.Description.ToString() + " - " + eventsComboBox.Text + Path.GetExtension(sourceFile);
                 string destinationFile = Path.Combine(matchVideoDestinationPathTextBox.Text, videoName);
@@ -522,7 +548,8 @@ namespace FRCVideoSplitter2
 
         private void vid_ProgressChanged(object sender, long bytes)
         {
-            progress.SetChunkProgress(bytes);
+            Console.WriteLine("Bytes Sent: " + Convert.ToInt32(bytes));
+            progress.SetCompletedChunks(Convert.ToInt32(bytes));
         }
 
         private void vid_UploadFailed(object sender, String error)
@@ -538,9 +565,11 @@ namespace FRCVideoSplitter2
 
         private void cancelAsyncButton_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("Cancel Button Clicked");
             if (backgroundWorker1.WorkerSupportsCancellation == true)
             {
-                backgroundWorker1.CancelAsync();
+                Console.WriteLine("Worker supports cancellation.");
+                backgroundWorker1.CancelAsync();                
             }
         }
 
@@ -549,7 +578,6 @@ namespace FRCVideoSplitter2
             BackgroundWorker worker = sender as BackgroundWorker;
             FRCApi.Event evt = eventsList.Find(i => i.name == Properties.Settings.Default.eventName);
             String playlistName = Properties.Settings.Default.year.ToString() + " " + evt.name;
-            int chunks = 0;
 
             /*Build the description
              * example:
@@ -588,6 +616,7 @@ namespace FRCVideoSplitter2
                 currentPlaylistId = uploader.CreatePlaylist(playlistName, playlistDesc, true);
             }
 
+            List<PlaylistItem> itemsInPlaylist = uploader.GetItemsInPlaylist(currentPlaylistId);
 
             for (videoUploadIndex = 0; videoUploadIndex < matchesList.Count; videoUploadIndex++)
             {
@@ -600,6 +629,15 @@ namespace FRCVideoSplitter2
                 {
                     String videoTitle = matchesList[videoUploadIndex].Description + " - " + Properties.Settings.Default.year.ToString() + " " + evt.name;
 
+                    int vIndex = itemsInPlaylist.FindIndex(v => v.Snippet.Title == videoTitle);
+                    if (vIndex >= 0)
+                    {
+                        matchesList[videoUploadIndex].YouTubeId = itemsInPlaylist[vIndex].Snippet.ResourceId.VideoId;
+                        continue;
+                    }
+
+                    progress.SetText("Uploading:\n" + videoTitle);
+                    
                     sb = new StringBuilder();
                     sb.AppendLine(videoTitle);
                     sb.AppendLine("Red (" + matchesList[videoUploadIndex].RedAlliance + ") - " + matchesList[videoUploadIndex].RedScore.ToString());
@@ -607,17 +645,90 @@ namespace FRCVideoSplitter2
                     sb.AppendLine("Uploaded by FRC Video Splitter (https://github.com/tytremblay/FRC-Video-Splitter-2)");
                     String videoDesc = sb.ToString();
 
-                    progress.Chunks = 
+                    int vidChunks = Convert.ToInt32(new FileInfo(matchesList[videoUploadIndex].VideoPath).Length);
+                    progress.Chunks = vidChunks;
+                    Console.WriteLine("vidChunks: " + vidChunks);
+                    
+                    progress.SetCompletedChunks(0);
 
-                    uploader.UploadVideo(videoTitle, videoDesc, matchesList[videoUploadIndex].VideoPath);
-                    progress.SetCompletedChunks(++chunks);
+                    try
+                    {
+                        uploader.UploadVideo(videoTitle, videoDesc, matchesList[videoUploadIndex].VideoPath).Wait();
+                    }
+                    catch (AggregateException ex)
+                    {
+                        foreach (var err in ex.InnerExceptions)
+                        {
+                            Console.WriteLine("Error: " + err.Message);
+                        }
+                    }
                 }
             }
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            // First, handle the case where an exception was thrown. 
+            if (e.Error != null)
+            {
+                MessageBox.Show(e.Error.Message);
+            }
+            else if (e.Cancelled)
+            {
+                // Next, handle the case where the user canceled  
+                // the operation. 
+                // Note that due to a race condition in  
+                // the DoWork event handler, the Cancelled 
+                // flag may not have been set, even though 
+                // CancelAsync was called.
+                progress.SetText("Canceled");
+                Console.WriteLine("Worker Sucessfully Cancelled");
+            }
+            Console.WriteLine("Worker Completed");
             progress.Close();
+        }
+
+        private void tbaSpreadsheetButton_Click(object sender, EventArgs e)
+        {
+            FRCApi.Event evt = eventsList.Find(i => i.name == Properties.Settings.Default.eventName);
+            String fileName = Properties.Settings.Default.year.ToString() + " " + evt.name + ".csv";
+
+            String filePath = Path.Combine(Properties.Settings.Default.matchVideoDestination, fileName);
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (SplitterTypes.Match match in matchesList)
+            {
+                if (match.YouTubeId != "")
+                {                    
+                    sb.AppendFormat("{0},", Properties.Settings.Default.year.ToString());
+                    sb.AppendFormat("{0},", evt.code.ToLower());
+                    if (match.Description.StartsWith("QF"))
+                    {
+                        sb.AppendFormat("{0},", "qf");
+                        sb.AppendFormat("{0},", match.Description.Substring(2));
+                    }
+                    else if (match.Description.StartsWith("SF"))
+                    {
+                        sb.AppendFormat("{0},", "sf");
+                        sb.AppendFormat("{0},", match.Description.Substring(2));
+                    }
+                    else if (match.Description.StartsWith("F"))
+                    {
+                        sb.AppendFormat("{0},", "f");
+                        sb.AppendFormat("{0},", match.Description.Substring(1));
+                    }
+                    else
+                    {
+                        sb.AppendFormat("{0},", "q");
+                        sb.AppendFormat("{0},", match.Description.Substring(1));
+                    }
+                    sb.AppendFormat("{0}{1}{2}", "http://www.youtube.com/watch?v=", match.YouTubeId, Environment.NewLine);
+                }
+            }
+
+            File.WriteAllText(filePath, sb.ToString());
+            MessageBox.Show("TBA .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
         }      
     }
 }

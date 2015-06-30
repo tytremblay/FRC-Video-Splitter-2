@@ -107,7 +107,10 @@ namespace FRCVideoSplitter2
                 newPlaylistItem = youtubeService.PlaylistItems.Insert(newPlaylistItem, "snippet").Execute();
             }
 
-
+            /// <summary>
+            /// Gets a list of playlists for the set credentials.
+            /// </summary>
+            /// <returns></returns>
             public List<Playlist> GetPlaylists()
             {
                 if (credential == null)
@@ -134,17 +137,43 @@ namespace FRCVideoSplitter2
                 return playlistListRequest.Execute().Items as List<Playlist>;
             }
 
+            public List<PlaylistItem> GetItemsInPlaylist(string playlistId)
+            {
+                if (credential == null)
+                {
+                    return null;
+                }
+
+                var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = this.GetType().ToString()
+                });
+
+                var channelsListRequest = youtubeService.Channels.List("contentDetails");
+                channelsListRequest.Mine = true;
+
+                // Retrieve the contentDetails part of the channel resource for the authenticated user's channel.
+                var channelsListResponse = channelsListRequest.Execute();
+
+                var channel = channelsListResponse.Items[0];
+
+                var playlistListItemsRequest = youtubeService.PlaylistItems.List("snippet");
+                playlistListItemsRequest.PlaylistId = playlistId;
+                return playlistListItemsRequest.Execute().Items as List<PlaylistItem>;
+            }
+
             /// <summary>
             /// Uploads a given video to YouTube
             /// </summary>
             /// <param name="title"></param>
             /// <param name="description"></param>
             /// <param name="path"></param>
-            public void UploadVideo(String title, String description, String path)
+            public async Task<IUploadProgress> UploadVideo(String title, String description, String path)
             {
                 if (credential == null)
                 {
-                    return;
+                    return null;
                 }
 
                 var youtubeService = new YouTubeService(new BaseClientService.Initializer()
@@ -173,7 +202,8 @@ namespace FRCVideoSplitter2
 
                     videosInsertRequest.ChunkSize = minimumChunkSize * 4;
 
-                    videosInsertRequest.Upload();
+                    IUploadProgress p = await videosInsertRequest.UploadAsync();
+                    return p;
                 }
             }
 

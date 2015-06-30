@@ -94,5 +94,29 @@ namespace FRCVideoSplitter2.Properties {
                 this["eventName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string sourceVideoLocation {
+            get {
+                return ((string)(this["sourceVideoLocation"]));
+            }
+            set {
+                this["sourceVideoLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string matchVideoDestination {
+            get {
+                return ((string)(this["matchVideoDestination"]));
+            }
+            set {
+                this["matchVideoDestination"] = value;
+            }
+        }
     }
 }

@@ -56,6 +56,7 @@
             this.splitVideosButton = new System.Windows.Forms.Button();
             this.uploadToYouTubeButton = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.tbaSpreadsheetButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.matchesDataGridView)).BeginInit();
             this.SuspendLayout();
@@ -280,13 +281,13 @@
             this.splitVideosButton.Name = "splitVideosButton";
             this.splitVideosButton.Size = new System.Drawing.Size(399, 34);
             this.splitVideosButton.TabIndex = 18;
-            this.splitVideosButton.Text = "SPLIT VIDEOS";
+            this.splitVideosButton.Text = "Split Videos";
             this.splitVideosButton.UseVisualStyleBackColor = true;
             this.splitVideosButton.Click += new System.EventHandler(this.splitVideosButton_Click);
             // 
             // uploadToYouTubeButton
             // 
-            this.uploadToYouTubeButton.Location = new System.Drawing.Point(12, 566);
+            this.uploadToYouTubeButton.Location = new System.Drawing.Point(12, 293);
             this.uploadToYouTubeButton.Name = "uploadToYouTubeButton";
             this.uploadToYouTubeButton.Size = new System.Drawing.Size(399, 34);
             this.uploadToYouTubeButton.TabIndex = 18;
@@ -296,14 +297,26 @@
             // 
             // backgroundWorker1
             // 
+            this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
+            // 
+            // tbaSpreadsheetButton
+            // 
+            this.tbaSpreadsheetButton.Location = new System.Drawing.Point(12, 333);
+            this.tbaSpreadsheetButton.Name = "tbaSpreadsheetButton";
+            this.tbaSpreadsheetButton.Size = new System.Drawing.Size(399, 34);
+            this.tbaSpreadsheetButton.TabIndex = 18;
+            this.tbaSpreadsheetButton.Text = "Write TBA Upload File";
+            this.tbaSpreadsheetButton.UseVisualStyleBackColor = true;
+            this.tbaSpreadsheetButton.Click += new System.EventHandler(this.tbaSpreadsheetButton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1148, 612);
+            this.Controls.Add(this.tbaSpreadsheetButton);
             this.Controls.Add(this.uploadToYouTubeButton);
             this.Controls.Add(this.splitVideosButton);
             this.Controls.Add(this.matchVideoBrowseButton);
@@ -325,7 +338,7 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "FRC Video Splitter";
+            this.Text = "Write TBA Upload File";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -365,6 +378,7 @@
         private System.Windows.Forms.Button splitVideosButton;
         private System.Windows.Forms.Button uploadToYouTubeButton;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Button tbaSpreadsheetButton;
     }
 }
 

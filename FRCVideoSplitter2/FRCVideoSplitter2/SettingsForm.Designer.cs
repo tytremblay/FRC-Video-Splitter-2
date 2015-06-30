@@ -77,7 +77,6 @@
             // 
             // matchLengthBox
             // 
-            this.matchLengthBox.Enabled = false;
             this.matchLengthBox.Location = new System.Drawing.Point(12, 38);
             this.matchLengthBox.Name = "matchLengthBox";
             this.matchLengthBox.Size = new System.Drawing.Size(51, 20);
