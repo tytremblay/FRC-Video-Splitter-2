@@ -18,6 +18,11 @@ namespace FRCVideoSplitter2
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Pull the events list from FRC for the given year.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RefreshFRCDataButton_Click(object sender, EventArgs e)
         {
             string events = api.getEventsListJsonString(Properties.Settings.Default.year);
@@ -49,6 +54,7 @@ namespace FRCVideoSplitter2
         private void SettingsForm_Load(object sender, EventArgs e)
         {
             this.yearBox.Text = Properties.Settings.Default.year.ToString();
+            this.matchLengthBox.Text = Properties.Settings.Default.matchLength;
         }
 
         private void saveButton_Click(object sender, EventArgs e)

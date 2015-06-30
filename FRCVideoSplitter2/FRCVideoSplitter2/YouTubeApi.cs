@@ -137,6 +137,11 @@ namespace FRCVideoSplitter2
                 return playlistListRequest.Execute().Items as List<Playlist>;
             }
 
+            /// <summary>
+            /// Get a list of items in the playlist for the given credentials and playlist id.
+            /// </summary>
+            /// <param name="playlistId"></param>
+            /// <returns></returns>
             public List<PlaylistItem> GetItemsInPlaylist(string playlistId)
             {
                 if (credential == null)
@@ -210,6 +215,10 @@ namespace FRCVideoSplitter2
             public EventHandler<long> Upload_ProgressChanged;
             public EventHandler<String> Upload_Failed;
 
+            /// <summary>
+            /// Fire the associated event handler
+            /// </summary>
+            /// <param name="uploadProgress"></param>
             void videosInsertRequest_ProgressChanged(Google.Apis.Upload.IUploadProgress uploadProgress)
             {
                 switch (uploadProgress.Status)

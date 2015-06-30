@@ -11,6 +11,10 @@ namespace FRCVideoSplitter2
 {
     class SplitterTypes
     {
+        /// <summary>
+        /// Match model that holds the information we care about in FRC Splitter.
+        /// Displays nicely in a datagridview
+        /// </summary>
         public class Match : INotifyPropertyChanged
         {
             private bool _include;
@@ -163,20 +167,5 @@ namespace FRCVideoSplitter2
                     PropertyChanged(this, new PropertyChangedEventArgs(name));
             }
         }
-
-        public class MatchTimeSpan
-        {
-            public string matchName { get; set; }
-            public TimeSpan timeSpan { get; set; }
-
-            public MatchTimeSpan() { }
-
-            public MatchTimeSpan(string name, TimeSpan span)
-            {
-                this.matchName = name;
-                this.timeSpan = span;
-            }
-        }
-
     }
 }

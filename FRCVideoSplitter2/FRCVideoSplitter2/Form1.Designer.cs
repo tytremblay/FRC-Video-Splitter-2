@@ -69,7 +69,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1148, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1392, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -187,7 +187,7 @@
             this.matchesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.matchesDataGridView.Location = new System.Drawing.Point(423, 33);
             this.matchesDataGridView.Name = "matchesDataGridView";
-            this.matchesDataGridView.Size = new System.Drawing.Size(713, 567);
+            this.matchesDataGridView.Size = new System.Drawing.Size(957, 567);
             this.matchesDataGridView.TabIndex = 9;
             this.matchesDataGridView.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.matchesDataGridView_CellMouseDown);
             this.matchesDataGridView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.matchesDataGridView_CellMouseUp);
@@ -315,7 +315,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1148, 612);
+            this.ClientSize = new System.Drawing.Size(1392, 612);
             this.Controls.Add(this.tbaSpreadsheetButton);
             this.Controls.Add(this.uploadToYouTubeButton);
             this.Controls.Add(this.splitVideosButton);

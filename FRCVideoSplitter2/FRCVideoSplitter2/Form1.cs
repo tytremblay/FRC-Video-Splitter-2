@@ -525,6 +525,11 @@ namespace FRCVideoSplitter2
         }
 
 
+        /// <summary>
+        /// Fire up the backgroundworker
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void uploadToYouTubeButton_Click(object sender, EventArgs e)
         {
             try
@@ -546,23 +551,47 @@ namespace FRCVideoSplitter2
             }            
         }
 
+        /// <summary>
+        /// Update the progress window when youtube reports with upload info
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="bytes"></param>
         private void vid_ProgressChanged(object sender, long bytes)
         {
             Console.WriteLine("Bytes Sent: " + Convert.ToInt32(bytes));
             progress.SetCompletedChunks(Convert.ToInt32(bytes));
         }
 
+
+        /// <summary>
+        /// not implemented yet...
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="error"></param>
         private void vid_UploadFailed(object sender, String error)
         {
 
         }
 
+        /// <summary>
+        /// When a video is done, associate its ID to the given playlist
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="id"></param>
         private void vid_UploadCompleted(object sender, string id)
         {
             matchesList[videoUploadIndex].YouTubeId = id;
             uploader.AddToPlaylist(currentPlaylistId, id);
         }
 
+        /// <summary>
+        /// Cancel the upload process.
+        /// 
+        /// TODO:  Make sure this cancels the actual upload that's fired, instead of killing
+        /// bgw and letting the upload complete.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cancelAsyncButton_Click(object sender, EventArgs e)
         {
             Console.WriteLine("Cancel Button Clicked");
@@ -573,17 +602,23 @@ namespace FRCVideoSplitter2
             }
         }
 
+        /// <summary>
+        /// Upload the included videos to Youtube in the background and keep track of it in the progress bar.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             FRCApi.Event evt = eventsList.Find(i => i.name == Properties.Settings.Default.eventName);
-            String playlistName = Properties.Settings.Default.year.ToString() + " " + evt.name;
+            String playlistName = String.Format("{0}{1}{2}", Properties.Settings.Default.year.ToString(), " ", evt.name);
 
             /*Build the description
              * example:
              * Reading High School, Reading, MA, USA
              * 3/6/2015 - 3/8/2015
              * http://www.thebluealliance.com/event/2015marea
+             * "Created by FRC Video Splitter (https://github.com/tytremblay/FRC-Video-Splitter-2)"
              */
 
             StringBuilder sb = new StringBuilder();
@@ -595,10 +630,13 @@ namespace FRCVideoSplitter2
 
             String playlistDesc = sb.ToString();
 
+            //Get a list of playlists for the associated YT account
             List<Playlist> playlists = uploader.GetPlaylists();
 
+            //See if the account already has a playlist by this name
             int index = playlists.FindIndex(f => f.Snippet.Title == playlistName);
 
+            //If so, ask them if they want to use that playlist
             if (index >= 0)
             {
                 DialogResult result = MessageBox.Show("The playlist \"" + playlistName + "\" already exists.  Use the existing playlist?", "Playlist Already Exists", MessageBoxButtons.YesNo);
@@ -611,8 +649,9 @@ namespace FRCVideoSplitter2
                     currentPlaylistId = playlists[index].Id;
                 }
             }
-            else
+            else 
             {
+                //If they don't want to use the playlist we found, create a new one.
                 currentPlaylistId = uploader.CreatePlaylist(playlistName, playlistDesc, true);
             }
 
@@ -629,6 +668,8 @@ namespace FRCVideoSplitter2
                 {
                     String videoTitle = matchesList[videoUploadIndex].Description + " - " + Properties.Settings.Default.year.ToString() + " " + evt.name;
 
+                    //If there's already a video in the playlist by this name, grab the id and don't upload this video
+                    //If the user wants to upload this video instead, they'll have to remove the other video from the playlist
                     int vIndex = itemsInPlaylist.FindIndex(v => v.Snippet.Title == videoTitle);
                     if (vIndex >= 0)
                     {
@@ -666,6 +707,11 @@ namespace FRCVideoSplitter2
             }
         }
 
+        /// <summary>
+        /// Close the progress dialog when done uploading
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // First, handle the case where an exception was thrown. 
@@ -688,6 +734,11 @@ namespace FRCVideoSplitter2
             progress.Close();
         }
 
+        /// <summary>
+        /// Write all matches with a YouTube ID in this session to a file in the mathes destination folder.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tbaSpreadsheetButton_Click(object sender, EventArgs e)
         {
             FRCApi.Event evt = eventsList.Find(i => i.name == Properties.Settings.Default.eventName);
