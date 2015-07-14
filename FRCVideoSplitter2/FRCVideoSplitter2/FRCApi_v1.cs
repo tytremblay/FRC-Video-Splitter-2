@@ -7,12 +7,12 @@ using Newtonsoft.Json;
 
 namespace FRCVideoSplitter2
 {
-    class FRCApi
+    class FRCApi_v1
     {
-        private string baseUrl = "https://frc-api.usfirst.org/v2.0/";
+        private string baseUrl = "https://frc-api.usfirst.org/api/v1.0/";
         Communicator communicator = new Communicator();
 
-        public FRCApi() { }
+        public FRCApi_v1() { }
 
         /// <summary>
         /// Get a list of match results from the FRC API
@@ -22,7 +22,7 @@ namespace FRCVideoSplitter2
         /// <returns></returns>
         public List<MatchResult> getMatchResults(int season, string eventKey)
         {
-            string uri = baseUrl + "/" + season.ToString() + "/matches/" + eventKey;
+            string uri = baseUrl + "/matches/" + season.ToString() + "/" + eventKey;
             string api_response = communicator.sendAndGetRawResponse(uri);
 
             List<MatchResult> results = JsonConvert.DeserializeObject<MatchResultsList>(api_response).Matches;
@@ -38,7 +38,7 @@ namespace FRCVideoSplitter2
         /// <returns></returns>
         public List<Event> getEvents(int season)
         {
-            string uri = baseUrl + "/" + season.ToString() + "/events";
+            string uri = baseUrl + "/events/" + season.ToString();
             string api_response = communicator.sendAndGetRawResponse(uri);
 
             List<Event> events = JsonConvert.DeserializeObject<EventsList>(api_response).Events;
@@ -53,7 +53,7 @@ namespace FRCVideoSplitter2
         /// <returns></returns>
         public string getEventsListJsonString(int season)
         {
-            string uri = baseUrl + "/" + season.ToString() + "/events";
+            string uri = baseUrl + "/events/" + season.ToString();
             string api_response = communicator.sendAndGetRawResponse(uri);
 
             return api_response;
