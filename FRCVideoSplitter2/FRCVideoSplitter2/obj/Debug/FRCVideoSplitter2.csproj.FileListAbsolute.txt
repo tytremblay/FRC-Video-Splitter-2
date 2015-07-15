@@ -46,3 +46,7 @@ C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVi
 C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.exe
 C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.pdb
 C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csprojResolveAssemblyReference.cache
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.exe.manifest
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.application
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.exe.manifest
+C:\Users\ttremblay\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.application
