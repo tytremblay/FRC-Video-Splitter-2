@@ -26,5 +26,8 @@
     <Setting Name="matchVideoDestination" Type="System.String" Scope="User">
       <Value Profile="(Default)">Click Browse...</Value>
     </Setting>
+    <Setting Name="firstTimeRunning" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

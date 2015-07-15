@@ -49,7 +49,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>aecpF3ni/F9TN3N1Sawt1g4CLMBcbQc2EjajS/QNrbc=</dsig:DigestValue>
+        <dsig:DigestValue>4USI0VVYRk7oQCq64OvI6bO60IAgCgWaWJ9jePrxo2Y=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -230,13 +230,13 @@
       <dsig:DigestValue>tveHiMyywaGjBGOX32Ffkmp7zwlvKFGKZqt1whtTfhw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="FRCVideoSplitter2.exe.config" size="2461">
+  <file name="FRCVideoSplitter2.exe.config" size="2612">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>wL+gsozBTJCVZxj4/L+O2FKGOmKOA2tBbhg2NW7TkBQ=</dsig:DigestValue>
+      <dsig:DigestValue>zhUO1RYGckrlUgiYlAzMEW6v322RcU7kd0nsOf4P/Ow=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>
