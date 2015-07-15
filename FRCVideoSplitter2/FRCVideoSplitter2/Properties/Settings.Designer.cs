@@ -97,7 +97,7 @@ namespace FRCVideoSplitter2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Click Browse...")]
         public string sourceVideoLocation {
             get {
                 return ((string)(this["sourceVideoLocation"]));
@@ -109,13 +109,25 @@ namespace FRCVideoSplitter2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Click Browse...")]
         public string matchVideoDestination {
             get {
                 return ((string)(this["matchVideoDestination"]));
             }
             set {
                 this["matchVideoDestination"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool firstTimeRunning {
+            get {
+                return ((bool)(this["firstTimeRunning"]));
+            }
+            set {
+                this["firstTimeRunning"] = value;
             }
         }
     }

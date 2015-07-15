@@ -42,6 +42,16 @@ namespace FRCVideoSplitter2
         /// <param name="e"></param>
         private void Form1_Load(object sender, EventArgs e)
         {
+            if (Properties.Settings.Default.firstTimeRunning)
+            {
+                //MessageBox.Show(String.Format("Welcome to FRCVideoSplitter2.\nDownloading {0} events list...", Properties.Settings.Default.year));
+                string events = api.getEventsListJsonString(Properties.Settings.Default.year);
+
+                Properties.Settings.Default.eventsJsonString = events;
+
+                Properties.Settings.Default.firstTimeRunning = false;
+                Properties.Settings.Default.Save();
+            }
             updateObjects();
             
             uploader.Upload_ProgressChanged += new EventHandler<long>(vid_ProgressChanged);
@@ -73,8 +83,7 @@ namespace FRCVideoSplitter2
         /// Pulls from settings and updates the objects in this class
         /// </summary>
         private void updateObjects()
-        {
-            
+        {            
             string eventsJsonStr = Properties.Settings.Default.eventsJsonString;
             this.eventsList = JsonConvert.DeserializeObject<FRCApi.EventsList>(eventsJsonStr).Events.OrderBy(o=>o.name).ToList();            
             this.yearBox.Text = Properties.Settings.Default.year.ToString();
