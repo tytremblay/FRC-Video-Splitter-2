@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace FRCVideoSplitter2
 {
     class FRCApi
     {
-        private string baseUrl = "https://frc-api.usfirst.org/v2.0/";
+        private string baseUrl = "https://frc-api.usfirst.org/v2.0";
         Communicator communicator = new Communicator();
 
         public FRCApi() { }
@@ -57,6 +58,23 @@ namespace FRCVideoSplitter2
             string api_response = communicator.sendAndGetRawResponse(uri);
 
             return api_response;
+        }
+
+        public List<ScoreDetails> getScoreDetails(int season, string eventCode, string tournamentLevel)
+        {
+            string uri = baseUrl + "/" + season.ToString() + "/scores/" + eventCode + "/" + tournamentLevel;
+            string api_response = communicator.sendAndGetRawResponse(uri);
+
+            if (api_response != null)
+            {
+                List<ScoreDetails> details = JsonConvert.DeserializeObject<ScoreDetailsList>(api_response).MatchScores;
+                return details;
+            }
+            else
+            {
+                return null;
+            }
+            
         }
 
         /// <summary>
@@ -108,7 +126,7 @@ namespace FRCVideoSplitter2
             public DateTime autoStartTime { get; set; }
             public string description { get; set; }
             public string level { get; set; }
-            public string matchNumber { get; set; }
+            public int matchNumber { get; set; }
             public string scoreRedFinal { get; set; }
             public string scoreRedFoul { get; set; }
             public string scoreRedAuto { get; set; }
@@ -130,6 +148,86 @@ namespace FRCVideoSplitter2
             public bool dq { get; set; }
 
             public MatchResultsTeam() { }
+        }
+
+        /// <summary>
+        /// A model for the breakdown of an alliance's score in the 2015 game.
+        /// </summary>
+        public class AllianceScoreDetails
+        {
+            public int adjustPoints { get; set; }
+            public string alliance { get; set; }
+            public int autoPoints { get; set; }
+            public int containerCountLevel1 { get; set; }
+            public int containerCountLevel2 { get; set; }
+            public int containerCountLevel3 { get; set; }
+            public int containerCountLevel4 { get; set; }
+            public int containerCountLevel5 { get; set; }
+            public int containerCountLevel6 { get; set; }
+            public int containerPoints { get; set; }
+            public bool containerSet { get; set; }
+            public int foulCount { get; set; }
+            public int litterCountContainer { get; set; }
+            public int litterCountLandfill { get; set; }
+            public int litterCountUnprocessed { get; set; }
+            public int litterPoints { get; set; }
+            public bool robotSet { get; set; }
+            public int teleopPoints { get; set; }
+            public int totalPoints { get; set; }
+            public bool toteSet { get; set; }
+            public bool toteStack { get; set; }
+
+            public AllianceScoreDetails() { }
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (PropertyInfo propertyInfo in this.GetType().GetProperties())
+                {
+                    sb.AppendFormat("{0},", propertyInfo.GetValue(this, null));
+                }
+
+                return sb.ToString();
+            }
+        }
+
+        public class ScoreDetails
+        {
+            public string coopertition { get; set; }
+            public int coopertitionPoints { get; set; }
+            public string matchLevel { get; set; }
+            public int matchNumber { get; set; }
+            public List<AllianceScoreDetails> alliances { get; set; }
+
+            public ScoreDetails() { }
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (PropertyInfo propertyInfo in this.GetType().GetProperties())
+                {
+                    if (propertyInfo.Name != "alliances")
+                    {
+                        sb.AppendFormat("{0},", propertyInfo.GetValue(this, null));
+                    }
+                    else
+                    {
+                        foreach (AllianceScoreDetails alliance in alliances)
+                        {
+                            sb.AppendFormat("{0}", alliance.ToString());
+                        }
+                    }
+                }
+
+                return sb.ToString();
+            }
+        }
+
+        public class ScoreDetailsList
+        {
+            public List<ScoreDetails> MatchScores { get; set; }
+
+            public ScoreDetailsList() { }
         }
 
 

@@ -57,6 +57,7 @@
             this.uploadToYouTubeButton = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.tbaSpreadsheetButton = new System.Windows.Forms.Button();
+            this.saveScoreDetailsButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.matchesDataGridView)).BeginInit();
             this.SuspendLayout();
@@ -311,11 +312,22 @@
             this.tbaSpreadsheetButton.UseVisualStyleBackColor = true;
             this.tbaSpreadsheetButton.Click += new System.EventHandler(this.tbaSpreadsheetButton_Click);
             // 
+            // saveScoreDetailsButton
+            // 
+            this.saveScoreDetailsButton.Location = new System.Drawing.Point(12, 373);
+            this.saveScoreDetailsButton.Name = "saveScoreDetailsButton";
+            this.saveScoreDetailsButton.Size = new System.Drawing.Size(399, 34);
+            this.saveScoreDetailsButton.TabIndex = 18;
+            this.saveScoreDetailsButton.Text = "Save Score Details";
+            this.saveScoreDetailsButton.UseVisualStyleBackColor = true;
+            this.saveScoreDetailsButton.Click += new System.EventHandler(this.saveScoreDetailsButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1392, 612);
+            this.Controls.Add(this.saveScoreDetailsButton);
             this.Controls.Add(this.tbaSpreadsheetButton);
             this.Controls.Add(this.uploadToYouTubeButton);
             this.Controls.Add(this.splitVideosButton);
@@ -379,6 +391,7 @@
         private System.Windows.Forms.Button uploadToYouTubeButton;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Button tbaSpreadsheetButton;
+        private System.Windows.Forms.Button saveScoreDetailsButton;
     }
 }
 

@@ -27,6 +27,8 @@ namespace FRCVideoSplitter2
             private int _blueScore;
             private string _videoPath;
             private string _youtubeId;
+            private string _level;
+            private int _matchNumber;
 
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -130,6 +132,26 @@ namespace FRCVideoSplitter2
                 }
             }
 
+            public string Level
+            {
+                get { return _level; }
+                set
+                {
+                    _level = value;
+                    this.NotifyPropertyChanged("Level");
+                }
+            }
+
+            public int MatchNumber
+            {
+                get { return _matchNumber; }
+                set
+                {
+                    _matchNumber = value;
+                    this.NotifyPropertyChanged("MatchNumber");
+                }
+            }
+
             public Match(FRCApi.MatchResult frcMatch)
             {
                 this.Include = true;
@@ -159,6 +181,8 @@ namespace FRCVideoSplitter2
                 this.BlueScore = Convert.ToInt16(frcMatch.scoreBlueFinal);
                 this.VideoPath = "";
                 this.YouTubeId = "";
+                this.MatchNumber = frcMatch.matchNumber;
+                this.Level = frcMatch.level;
             }
 
             private void NotifyPropertyChanged(string name)

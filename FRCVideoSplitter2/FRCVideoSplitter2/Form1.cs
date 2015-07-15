@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Google.Apis.YouTube.v3.Data;
 using Google.Apis.Upload;
+using System.Text.RegularExpressions;
 
 namespace FRCVideoSplitter2
 {
@@ -20,6 +21,7 @@ namespace FRCVideoSplitter2
     {
         private List<FRCApi.Event> eventsList = new List<FRCApi.Event>();
         BindingList<SplitterTypes.Match> matchesList = new BindingList<SplitterTypes.Match>();
+        List<FRCApi.MatchResult> rawMatches = new List<FRCApi.MatchResult>();
         FRCApi api = new FRCApi();
         ProgressDialog progress;
         YouTubeApi.VideoUploader uploader = new YouTubeApi.VideoUploader();
@@ -41,7 +43,7 @@ namespace FRCVideoSplitter2
         private void Form1_Load(object sender, EventArgs e)
         {
             updateObjects();
-
+            
             uploader.Upload_ProgressChanged += new EventHandler<long>(vid_ProgressChanged);
             uploader.UploadCompleted += new EventHandler<string>(vid_UploadCompleted);
             uploader.Upload_Failed += new EventHandler<string>(vid_UploadFailed);
@@ -79,6 +81,8 @@ namespace FRCVideoSplitter2
             List<string> eventNames = this.eventsList.Select(x => x.name).ToList();
             this.eventsComboBox.DataSource = eventNames;
             this.matchesDataGridView.AutoResizeColumns();
+            this.matchVideoDestinationPathTextBox.Text = Properties.Settings.Default.matchVideoDestination;
+            this.sourceVideoPathTextBox.Text = Properties.Settings.Default.sourceVideoLocation;
 
             Properties.Settings.Default.useManualTimeStamps = checkBox1.Checked;
             Properties.Settings.Default.Save();
@@ -123,9 +127,9 @@ namespace FRCVideoSplitter2
             this.matchesDataGridView.DataSource = null;
             matchesList.Clear();
 
-            List<FRCApi.MatchResult> frcMatches = api.getMatchResults(Properties.Settings.Default.year, Properties.Settings.Default.eventCode);
-            
-            foreach (FRCApi.MatchResult frcMatch in frcMatches)
+            rawMatches = api.getMatchResults(Properties.Settings.Default.year, Properties.Settings.Default.eventCode);
+
+            foreach (FRCApi.MatchResult frcMatch in rawMatches)
             {
                 matchesList.Add(new SplitterTypes.Match(frcMatch));
             }
@@ -141,6 +145,8 @@ namespace FRCVideoSplitter2
         {
             this.matchesDataGridView.Columns["TimeStamp"].DefaultCellStyle.Format = "HH:mm:ss.fff";
             this.matchesDataGridView.Columns["AutoStartTime"].DefaultCellStyle.Format = "M/dd HH:mm:ss.fff";
+            this.matchesDataGridView.Columns["Level"].Visible = false;
+            this.matchesDataGridView.Columns["MatchNumber"].Visible = false;
 
             foreach (DataGridViewColumn col in matchesDataGridView.Columns)
             {
@@ -780,6 +786,53 @@ namespace FRCVideoSplitter2
 
             File.WriteAllText(filePath, sb.ToString());
             MessageBox.Show("TBA .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
+        }
+
+        private void saveScoreDetailsButton_Click(object sender, EventArgs e)
+        {
+            
+            List<SplitterTypes.Match> includedMatches = matchesList.Where(i => i.Include == true).ToList();
+
+            List<FRCApi.ScoreDetails> scores = api.getScoreDetails(Properties.Settings.Default.year, Properties.Settings.Default.eventCode.ToLower(), "qual");
+
+            scores.AddRange(api.getScoreDetails(Properties.Settings.Default.year, Properties.Settings.Default.eventCode.ToLower(), "playoff"));
+
+            FRCApi.Event evt = eventsList.Find(i => i.name == Properties.Settings.Default.eventName);
+            String fileName = "Score Details - " + Properties.Settings.Default.year.ToString() + " " + evt.name + ".csv";
+
+            String filePath = Path.Combine(Properties.Settings.Default.matchVideoDestination, fileName);
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (PropertyInfo p in scores[0].GetType().GetProperties())
+            {
+                if (p.Name != "alliances")
+                {
+                    sb.AppendFormat("{0},", p.Name);
+                }
+                else
+                {
+                    foreach (FRCApi.AllianceScoreDetails alliance in scores[0].alliances)
+                    {
+                        foreach (PropertyInfo pi in alliance.GetType().GetProperties())
+                        {
+                            sb.AppendFormat("{0},", pi.Name);
+                        }
+                    }
+                }            
+            }
+
+            sb.AppendLine();
+
+            foreach (SplitterTypes.Match match in includedMatches)
+            {
+                FRCApi.ScoreDetails matchedScore = scores.Find(i => i.matchLevel == match.Level && i.matchNumber == match.MatchNumber);
+
+                sb.AppendFormat("{0}{1}", matchedScore.ToString(), Environment.NewLine);
+            }
+
+            File.WriteAllText(filePath, sb.ToString());
+            MessageBox.Show("Score details .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
         }      
     }
 }
