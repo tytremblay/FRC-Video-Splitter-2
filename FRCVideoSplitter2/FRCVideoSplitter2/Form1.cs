@@ -842,6 +842,65 @@ namespace FRCVideoSplitter2
 
             File.WriteAllText(filePath, sb.ToString());
             MessageBox.Show("Score details .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
+        }
+
+        private void getAllTheDataButton_Click(object sender, EventArgs e)
+        {
+            String fileName = "Score Details - All Events.csv";
+
+            String filePath = Path.Combine(Properties.Settings.Default.matchVideoDestination, fileName);
+
+            StringBuilder sb = new StringBuilder();
+
+            FRCApi.ScoreDetails sampleSD = new FRCApi.ScoreDetails();
+
+            sb.AppendFormat("{0},{1},", "eventCode", "startDate");
+
+            bool firstLoop = true;
+
+            foreach (FRCApi.Event evt in eventsList)
+            {
+                Console.WriteLine("Getting score detials for: " + evt.code);
+                List<FRCApi.ScoreDetails> scores = api.getScoreDetails(Properties.Settings.Default.year, evt.code.ToLower(), "qual");                
+
+                if (scores != null)
+                {
+                    scores.AddRange(api.getScoreDetails(Properties.Settings.Default.year, evt.code.ToLower(), "playoff"));
+
+                    if (firstLoop)
+                    {
+                        foreach (PropertyInfo p in scores[0].GetType().GetProperties())
+                        {
+                            if (p.Name != "alliances")
+                            {
+                                sb.AppendFormat("{0},", p.Name);
+                            }
+                            else
+                            {
+                                foreach (FRCApi.AllianceScoreDetails alliance in scores[0].alliances)
+                                {
+                                    foreach (PropertyInfo pi in alliance.GetType().GetProperties())
+                                    {
+                                        sb.AppendFormat("{0},", pi.Name);
+                                    }
+                                }
+                            }
+                        }
+                        sb.AppendLine();
+                        firstLoop = false;
+                    }
+
+                    
+
+                    foreach (FRCApi.ScoreDetails score in scores)
+                    {
+                        sb.AppendFormat("{0},{1},{2}{3}", evt.code.ToLower(), evt.dateStart.ToShortDateString(), score.ToString(), Environment.NewLine);
+                    }
+                }
+            }
+
+            File.WriteAllText(filePath, sb.ToString());
+            MessageBox.Show("Score details .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
         }      
     }
 }

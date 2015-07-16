@@ -199,6 +199,7 @@ namespace FRCVideoSplitter2
             public int matchNumber { get; set; }
             public List<AllianceScoreDetails> alliances { get; set; }
 
+            //There's 2 alliances, so let's just add them.
             public ScoreDetails() { }
 
             public override string ToString()
