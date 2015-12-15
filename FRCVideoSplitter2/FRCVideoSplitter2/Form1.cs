@@ -854,14 +854,15 @@ namespace FRCVideoSplitter2
 
             FRCApi.ScoreDetails sampleSD = new FRCApi.ScoreDetails();
 
-            sb.AppendFormat("{0},{1},", "eventCode", "startDate");
+            sb.AppendFormat("{0},{1},{2}", "eventCode", "startDate", "startTime");
 
             bool firstLoop = true;
 
             foreach (FRCApi.Event evt in eventsList)
             {
                 Console.WriteLine("Getting score detials for: " + evt.code);
-                List<FRCApi.ScoreDetails> scores = api.getScoreDetails(Properties.Settings.Default.year, evt.code.ToLower(), "qual");                
+                List<FRCApi.ScoreDetails> scores = api.getScoreDetails(Properties.Settings.Default.year, evt.code.ToLower(), "qual");
+                List<FRCApi.MatchResult> results = api.getMatchResults(Properties.Settings.Default.year, evt.code.ToLower());
 
                 if (scores != null)
                 {
@@ -886,6 +887,23 @@ namespace FRCVideoSplitter2
                                 }
                             }
                         }
+                        foreach (PropertyInfo p in results[0].GetType().GetProperties())
+                        {
+                            if (p.Name != "teams")
+                            {
+                                sb.AppendFormat("{0},", p.Name);
+                            }
+                            else
+                            {
+                                foreach (FRCApi.MatchResultsTeam team in results[0].teams)
+                                {
+                                    foreach (PropertyInfo pi in team.GetType().GetProperties())
+                                    {
+                                        sb.AppendFormat("{0},", pi.Name);
+                                    }
+                                }
+                            }
+                        }
                         sb.AppendLine();
                         firstLoop = false;
                     }
@@ -894,8 +912,10 @@ namespace FRCVideoSplitter2
 
                     foreach (FRCApi.ScoreDetails score in scores)
                     {
-                        sb.AppendFormat("{0},{1},{2}{3}", evt.code.ToLower(), evt.dateStart.ToShortDateString(), score.ToString(), Environment.NewLine);
+                        FRCApi.MatchResult mr = results.Find(i => i.matchNumber == score.matchNumber && i.level == score.matchLevel);
+                        sb.AppendFormat("{0},{1},{2}{3}{4}", evt.code.ToLower(), evt.dateStart.ToShortDateString(), score.ToString(), mr.ToString(), Environment.NewLine);
                     }
+                    
                 }
             }
 

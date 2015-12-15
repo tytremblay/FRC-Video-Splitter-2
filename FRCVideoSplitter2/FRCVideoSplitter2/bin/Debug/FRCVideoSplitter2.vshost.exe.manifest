@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="FRCVideoSplitter2.exe" size="74240">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="FRCVideoSplitter2.exe" size="75264">
       <assemblyIdentity name="FRCVideoSplitter2" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>9cXvNKiqoHxxTop1fgyVs4osK1EP60QKsPoVzYX8Anc=</dsig:DigestValue>
+        <dsig:DigestValue>ybfR6wv881fsZSL3WXSFiJnKBZdJswm9A3yse9bVeto=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

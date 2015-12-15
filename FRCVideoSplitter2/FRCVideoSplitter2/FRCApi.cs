@@ -26,9 +26,16 @@ namespace FRCVideoSplitter2
             string uri = baseUrl + "/" + season.ToString() + "/matches/" + eventKey;
             string api_response = communicator.sendAndGetRawResponse(uri);
 
-            List<MatchResult> results = JsonConvert.DeserializeObject<MatchResultsList>(api_response).Matches;
+            if (api_response != null)
+            {
+                List<MatchResult> results = JsonConvert.DeserializeObject<MatchResultsList>(api_response).Matches;
 
-            return results;
+                return results;
+            }
+            else
+            {
+                return null;
+            }
         }
 
 
@@ -136,6 +143,27 @@ namespace FRCVideoSplitter2
             public List<MatchResultsTeam> teams { get; set; }
 
             public MatchResult() { }
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (PropertyInfo propertyInfo in this.GetType().GetProperties())
+                {
+                    if (propertyInfo.Name != "teams")
+                    {
+                        sb.AppendFormat("{0},", propertyInfo.GetValue(this, null));
+                    }
+                    else
+                    {
+                        foreach (MatchResultsTeam team in teams)
+                        {
+                            sb.AppendFormat("{0}", team.ToString());
+                        }
+                    }
+                }
+
+                return sb.ToString();
+            }
         }
 
         /// <summary>
@@ -148,6 +176,16 @@ namespace FRCVideoSplitter2
             public bool dq { get; set; }
 
             public MatchResultsTeam() { }
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (PropertyInfo propertyInfo in this.GetType().GetProperties())
+                {
+                    sb.AppendFormat("{0},", propertyInfo.GetValue(this, null));
+                }
+                return sb.ToString();
+            }
         }
 
         /// <summary>
