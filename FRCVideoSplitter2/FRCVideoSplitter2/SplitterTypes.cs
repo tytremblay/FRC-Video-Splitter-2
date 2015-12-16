@@ -209,25 +209,45 @@ namespace FRCVideoSplitter2
             public string eventCode { get; set; }
             public string match { get; set; }
             public string path { get; set; }
+            public string youTube { get; set; }
 
             public SplitVideo(string eventCode, string match, string path)
             {
                 this.eventCode = eventCode;
                 this.match = match;
                 this.path = path;
+                this.youTube = "";
+            }
+
+            public SplitVideo(string eventCode, string match, string path, string youTube)
+            {
+                this.eventCode = eventCode;
+                this.match = match;
+                this.path = path;
+                this.youTube = youTube;
             }
 
             public SplitVideo(string csv)
             {
                 string[] parts = csv.Split(',');
-                this.eventCode = parts[0];
-                this.match = parts[1];
-                this.path = parts[2];
+                if (parts.Length > 3)
+                {
+                    this.eventCode = parts[0];
+                    this.match = parts[1];
+                    this.path = parts[2];
+                    this.youTube = parts[3];
+                }
+                else if (parts.Length == 3)
+                {
+                    this.eventCode = parts[0];
+                    this.match = parts[1];
+                    this.path = parts[2];
+                }
             }
 
             public override string ToString()
             {
-                return eventCode + "," + match + "," + path;
+                return eventCode + "," + match + "," + path + "," + youTube;
             }
         }
     }

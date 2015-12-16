@@ -21,6 +21,7 @@ namespace FRCVideoSplitter2
     {
         private List<FRCApi.Event> eventsList = new List<FRCApi.Event>();
         BindingList<SplitterTypes.Match> matchesList = new BindingList<SplitterTypes.Match>();
+        List<SplitterTypes.SplitVideo> splitVideos = new List<SplitterTypes.SplitVideo>();
         List<FRCApi.MatchResult> rawMatches = new List<FRCApi.MatchResult>();
         FRCApi api = new FRCApi();
         ProgressDialog progress;
@@ -465,7 +466,6 @@ namespace FRCVideoSplitter2
             progress.Chunks = chunks;
             progress.Show();
             int completed = 0;
-            List<SplitterTypes.SplitVideo> splitVideos = new List<SplitterTypes.SplitVideo>();
 
             List<SplitterTypes.Match> includedMatches = matchesList.Where(i => i.Include == true).ToList();
             
@@ -600,7 +600,7 @@ namespace FRCVideoSplitter2
                 progress.Canceled += new EventHandler<EventArgs>(cancelAsyncButton_Click);
                 progress.Show();
                 backgroundWorker1.RunWorkerAsync();
-            }            
+            }        
         }
 
         /// <summary>
@@ -634,6 +634,7 @@ namespace FRCVideoSplitter2
         {
             matchesList[videoUploadIndex].YouTubeId = id;
             uploader.AddToPlaylist(currentPlaylistId, id);
+            splitVideos.First(i => i.match == matchesList[videoUploadIndex].Description).youTube = id;
         }
 
         /// <summary>
@@ -784,6 +785,35 @@ namespace FRCVideoSplitter2
             }
             Console.WriteLine("Worker Completed");
             progress.Close();
+
+            foreach(SplitterTypes.Match m in matchesList)
+            {
+                string importFilePath = Path.Combine(matchVideoDestinationPathTextBox.Text, eventsComboBox.Text + ".csv");
+
+                if (!File.Exists(importFilePath))
+                {
+                    using (StreamWriter sw = File.CreateText(importFilePath))
+                    {
+                        foreach (SplitterTypes.SplitVideo vid in splitVideos)
+                        {
+                            sw.WriteLine(vid.ToString());
+                        }
+                    }
+                }
+                else
+                {
+                    File.Delete(importFilePath);
+                    using (StreamWriter sw = File.CreateText(importFilePath))
+                    {
+                        foreach (SplitterTypes.SplitVideo vid in splitVideos)
+                        {
+                            sw.WriteLine(vid.ToString());
+                        }
+                    }
+                }
+            }
+
+            MessageBox.Show("Videos uploaded Successfully.  Created a private playlist on the channel.");            
         }
 
         /// <summary>
@@ -794,7 +824,7 @@ namespace FRCVideoSplitter2
         private void tbaSpreadsheetButton_Click(object sender, EventArgs e)
         {
             FRCApi.Event evt = eventsList.Find(i => i.name == Properties.Settings.Default.eventName);
-            String fileName = Properties.Settings.Default.year.ToString() + " " + evt.name + ".csv";
+            String fileName = "TBA - " + Properties.Settings.Default.year.ToString() + " " + evt.name + ".csv";
 
             String filePath = Path.Combine(Properties.Settings.Default.matchVideoDestination, fileName);
 
@@ -976,6 +1006,7 @@ namespace FRCVideoSplitter2
             foreach (SplitterTypes.SplitVideo sVid in importVids)
             {
                 matchesList.First(i => i.Description == sVid.match).VideoPath = sVid.path;
+                matchesList.First(i => i.Description == sVid.match).YouTubeId = sVid.youTube;
                 matchesList.First(i => i.Description == sVid.match).Include = true;
             }
         }
