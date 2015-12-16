@@ -34,6 +34,7 @@
             this.overrideHelperLabel = new System.Windows.Forms.Label();
             this.matchLengthBox = new System.Windows.Forms.TextBox();
             this.saveButton = new System.Windows.Forms.Button();
+            this.useScoreDisplayedTimeCheckbox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // RefreshFRCDataButton
@@ -93,11 +94,23 @@
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
+            // useScoreDisplayedTimeCheckbox
+            // 
+            this.useScoreDisplayedTimeCheckbox.AutoSize = true;
+            this.useScoreDisplayedTimeCheckbox.Location = new System.Drawing.Point(252, 40);
+            this.useScoreDisplayedTimeCheckbox.Name = "useScoreDisplayedTimeCheckbox";
+            this.useScoreDisplayedTimeCheckbox.Size = new System.Drawing.Size(166, 17);
+            this.useScoreDisplayedTimeCheckbox.TabIndex = 8;
+            this.useScoreDisplayedTimeCheckbox.Text = "Use Post Result Time Instead";
+            this.useScoreDisplayedTimeCheckbox.UseVisualStyleBackColor = true;
+            this.useScoreDisplayedTimeCheckbox.CheckedChanged += new System.EventHandler(this.useScoreDisplayedTimeCheckbox_CheckedChanged);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(582, 496);
+            this.Controls.Add(this.useScoreDisplayedTimeCheckbox);
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.overrideHelperLabel);
             this.Controls.Add(this.matchLengthBox);
@@ -120,5 +133,6 @@
         private System.Windows.Forms.Label overrideHelperLabel;
         private System.Windows.Forms.TextBox matchLengthBox;
         private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.CheckBox useScoreDisplayedTimeCheckbox;
     }
 }

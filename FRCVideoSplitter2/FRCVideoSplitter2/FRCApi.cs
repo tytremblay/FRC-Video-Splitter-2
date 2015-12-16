@@ -5,12 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Reflection;
+using System.Web;
+using System.Net;
 
 namespace FRCVideoSplitter2
 {
     class FRCApi
     {
-        private string baseUrl = "https://frc-api.usfirst.org/v2.0";
+        private string baseUrl = "https://frc-api.firstinspires.org/v2.0";
+        //https://frc-api.firstinspires.org/v2.0 
+        //https://frc-api.usfirst.org/v2.0
         Communicator communicator = new Communicator();
 
         public FRCApi() { }
@@ -130,10 +134,11 @@ namespace FRCVideoSplitter2
         /// </summary>
         public class MatchResult
         {
-            public DateTime autoStartTime { get; set; }
+            public DateTime actualStartTime { get; set; }
             public string description { get; set; }
-            public string level { get; set; }
+            public string tournamentLevel { get; set; }
             public int matchNumber { get; set; }
+            public DateTime postResultTime {get; set;}
             public string scoreRedFinal { get; set; }
             public string scoreRedFoul { get; set; }
             public string scoreRedAuto { get; set; }
@@ -275,11 +280,15 @@ namespace FRCVideoSplitter2
         /// </summary>
         private class Communicator
         {
+            
             public string sendAndGetRawResponse(string uri)
             {
                 var request = System.Net.WebRequest.Create(uri) as System.Net.HttpWebRequest;
                 request.KeepAlive = true;
-
+                
+                //REMOVE AFTER  FRC FIX?
+                //request.ServerCertificateValidationCallback += (o, c, ch, er) => true;
+                                
                 string token = "TYTREMBLAY:C272D991-944E-49D7-B10E-27BA5EBB598B";
 
                 string encodedToken = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(token));
@@ -305,13 +314,16 @@ namespace FRCVideoSplitter2
 
                     return responseContent;
                 }
-                catch (Exception ex)
+                catch (WebException ex)
                 {
+                    HttpWebResponse response = (HttpWebResponse)ex.Response;
+                    Console.WriteLine("Status Code : {0}", ((HttpWebResponse)ex.Response).StatusCode);
                     Console.WriteLine(ex.Message);
                     
                 }
                 return responseContent;
             }
+
         }
     }
 }

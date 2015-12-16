@@ -153,7 +153,8 @@ namespace FRCVideoSplitter2
         private void SetDataGridViewFormatting()
         {
             this.matchesDataGridView.Columns["TimeStamp"].DefaultCellStyle.Format = "HH:mm:ss.fff";
-            this.matchesDataGridView.Columns["AutoStartTime"].DefaultCellStyle.Format = "M/dd HH:mm:ss.fff";
+            this.matchesDataGridView.Columns["ActualStartTime"].DefaultCellStyle.Format = "M/dd HH:mm:ss.fff";
+            this.matchesDataGridView.Columns["PostResultTime"].DefaultCellStyle.Format = "M/dd HH:mm:ss.fff";
             this.matchesDataGridView.Columns["Level"].Visible = false;
             this.matchesDataGridView.Columns["MatchNumber"].Visible = false;
 
@@ -343,8 +344,8 @@ namespace FRCVideoSplitter2
             {
                 if (matchesList[i].Include == true)
                 {
-                    previousMatchTime = matchesList[i - 1].AutoStartTime;
-                    currentMatchTime = matchesList[i].AutoStartTime;
+                    previousMatchTime = matchesList[i - 1].ActualStartTime;
+                    currentMatchTime = matchesList[i].ActualStartTime;
                     previousMatchStamp = matchesList[i - 1].TimeStamp;
 
                     matchesList[i].TimeStamp = previousMatchStamp + (currentMatchTime - previousMatchTime);
@@ -474,7 +475,17 @@ namespace FRCVideoSplitter2
                 string videoName = match.Description.ToString() + " - " + eventsComboBox.Text + Path.GetExtension(sourceFile);
                 string destinationFile = Path.Combine(matchVideoDestinationPathTextBox.Text, videoName);
                 string command = "ffmpeg.exe";
-                string args = "-ss " + startTime + " -i \"" + sourceFile + "\" -t " + Properties.Settings.Default.matchLength + " -c:v copy -c:a copy \"" + destinationFile + "\"";
+                string args = "";
+                if (Properties.Settings.Default.useScoreDisplayedTime)
+                {
+                    TimeSpan matchLength = ((match.PostResultTime - match.ActualStartTime).Add(TimeSpan.FromSeconds(15)));
+                    string matchLengthString = matchLength.ToString();//"hh:mm:ss");
+                    args = "-ss " + startTime + " -i \"" + sourceFile + "\" -t " + matchLengthString + " -c:v copy -c:a copy \"" + destinationFile + "\"";
+                }
+                else
+                {
+                    args = "-ss " + startTime + " -i \"" + sourceFile + "\" -t " + Properties.Settings.Default.matchLength + " -c:v copy -c:a copy \"" + destinationFile + "\"";
+                }
 
                 Console.WriteLine(args);
 
@@ -912,7 +923,7 @@ namespace FRCVideoSplitter2
 
                     foreach (FRCApi.ScoreDetails score in scores)
                     {
-                        FRCApi.MatchResult mr = results.Find(i => i.matchNumber == score.matchNumber && i.level == score.matchLevel);
+                        FRCApi.MatchResult mr = results.Find(i => i.matchNumber == score.matchNumber && i.tournamentLevel == score.matchLevel);
                         sb.AppendFormat("{0},{1},{2}{3}{4}", evt.code.ToLower(), evt.dateStart.ToShortDateString(), score.ToString(), mr.ToString(), Environment.NewLine);
                     }
                     

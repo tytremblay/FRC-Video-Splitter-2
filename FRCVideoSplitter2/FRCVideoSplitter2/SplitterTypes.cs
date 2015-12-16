@@ -19,7 +19,8 @@ namespace FRCVideoSplitter2
         {
             private bool _include;
             private DateTime _timeStamp;
-            private DateTime _autoStartTime;
+            private DateTime _actualStartTime;
+            private DateTime _postResultTime;
             private string _description;
             private string _redAlliance;
             private string _blueAlliance;
@@ -52,16 +53,25 @@ namespace FRCVideoSplitter2
                 }
             }
 
-            public DateTime AutoStartTime
+            public DateTime ActualStartTime
             {
-                get { return _autoStartTime; }
+                get { return _actualStartTime; }
                 set
                 {
-                    _autoStartTime = value;
+                    _actualStartTime = value;
                     this.NotifyPropertyChanged("AutoStartTime");
                 }
             }
-
+            
+            public DateTime PostResultTime
+            {
+                get { return _postResultTime; }
+                set
+                {
+                    _postResultTime = value;
+                    this.NotifyPropertyChanged("PostResultsTime");
+                }
+            }
             public string Description
             {
                 get { return _description; }
@@ -156,7 +166,9 @@ namespace FRCVideoSplitter2
             {
                 this.Include = true;
                 this.TimeStamp = new DateTime();
-                this.AutoStartTime = frcMatch.autoStartTime;
+                this.ActualStartTime = frcMatch.actualStartTime;
+                this.PostResultTime = frcMatch.postResultTime;
+                
                 if (frcMatch.description.StartsWith("Qualification "))
                 {
                     this.Description = "Q" + frcMatch.description.Substring(14);
@@ -182,7 +194,7 @@ namespace FRCVideoSplitter2
                 this.VideoPath = "";
                 this.YouTubeId = "";
                 this.MatchNumber = frcMatch.matchNumber;
-                this.Level = frcMatch.level;
+                this.Level = frcMatch.tournamentLevel;
             }
 
             private void NotifyPropertyChanged(string name)
