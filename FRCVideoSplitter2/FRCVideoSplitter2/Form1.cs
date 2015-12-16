@@ -465,9 +465,10 @@ namespace FRCVideoSplitter2
             progress.Chunks = chunks;
             progress.Show();
             int completed = 0;
+            List<SplitterTypes.SplitVideo> splitVideos = new List<SplitterTypes.SplitVideo>();
 
             List<SplitterTypes.Match> includedMatches = matchesList.Where(i => i.Include == true).ToList();
-
+            
             foreach (SplitterTypes.Match match in includedMatches)
             {
                 progress.SetText("Splitting video " + (completed + 1) + " of " + matchesList.Where(i => i.Include == true).ToList().Count);
@@ -503,7 +504,32 @@ namespace FRCVideoSplitter2
 
                 //save the video path in the match object
                 match.VideoPath = destinationFile;
+                splitVideos.Add(new SplitterTypes.SplitVideo(eventCodeBox.Text, match.Description.ToString(), destinationFile));
+
             }
+
+            string importFilePath = Path.Combine(matchVideoDestinationPathTextBox.Text, eventsComboBox.Text + ".csv");
+            if (!File.Exists(importFilePath))
+            {
+                using (StreamWriter sw = File.CreateText(importFilePath))
+                {
+                    foreach (SplitterTypes.SplitVideo vid in splitVideos)
+                    {
+                        sw.WriteLine(vid.ToString());
+                    }
+                }
+            }
+            else
+            {
+                using (StreamWriter sw = File.AppendText(importFilePath))
+                {
+                    foreach (SplitterTypes.SplitVideo vid in splitVideos)
+                    {
+                        sw.WriteLine(vid.ToString());
+                    }
+                }
+            }
+
             progress.Close();
         }
 
@@ -932,6 +958,26 @@ namespace FRCVideoSplitter2
 
             File.WriteAllText(filePath, sb.ToString());
             MessageBox.Show("Score details .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
-        }      
+        }
+
+        private void getPrevVideosButton_Click(object sender, EventArgs e)
+        {
+            List<SplitterTypes.SplitVideo> importVids = new List<SplitterTypes.SplitVideo>();
+            string filePath = Path.Combine(matchVideoDestinationPathTextBox.Text, eventsComboBox.Text + ".csv");
+            if (File.Exists(filePath))
+            {
+                string[] csvLines = File.ReadAllLines(filePath);
+                foreach (string csv in csvLines)
+                {
+                    importVids.Add(new SplitterTypes.SplitVideo(csv));
+                }
+            }
+
+            foreach (SplitterTypes.SplitVideo sVid in importVids)
+            {
+                matchesList.First(i => i.Description == sVid.match).VideoPath = sVid.path;
+                matchesList.First(i => i.Description == sVid.match).Include = true;
+            }
+        }
     }
 }

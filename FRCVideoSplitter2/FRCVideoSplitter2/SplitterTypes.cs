@@ -203,5 +203,32 @@ namespace FRCVideoSplitter2
                     PropertyChanged(this, new PropertyChangedEventArgs(name));
             }
         }
+
+        public class SplitVideo
+        {
+            public string eventCode { get; set; }
+            public string match { get; set; }
+            public string path { get; set; }
+
+            public SplitVideo(string eventCode, string match, string path)
+            {
+                this.eventCode = eventCode;
+                this.match = match;
+                this.path = path;
+            }
+
+            public SplitVideo(string csv)
+            {
+                string[] parts = csv.Split(',');
+                this.eventCode = parts[0];
+                this.match = parts[1];
+                this.path = parts[2];
+            }
+
+            public override string ToString()
+            {
+                return eventCode + "," + match + "," + path;
+            }
+        }
     }
 }
