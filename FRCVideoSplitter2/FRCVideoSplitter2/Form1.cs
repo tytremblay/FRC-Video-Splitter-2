@@ -22,7 +22,6 @@ namespace FRCVideoSplitter2
         private List<FRCApi.Event> eventsList = new List<FRCApi.Event>();
         BindingList<SplitterTypes.Match> matchesList = new BindingList<SplitterTypes.Match>();
         List<SplitterTypes.SplitVideo> splitVideos = new List<SplitterTypes.SplitVideo>();
-        List<FRCApi.MatchResult> rawMatches = new List<FRCApi.MatchResult>();
         FRCApi api = new FRCApi();
         ProgressDialog progress;
         YouTubeApi.VideoUploader uploader = new YouTubeApi.VideoUploader();
@@ -137,7 +136,11 @@ namespace FRCVideoSplitter2
             this.matchesDataGridView.DataSource = null;
             matchesList.Clear();
 
-            rawMatches = api.getMatchResults(Properties.Settings.Default.year, Properties.Settings.Default.eventCode);
+            int year = Properties.Settings.Default.year;
+
+            List<FRCApi.MatchResult> rawMatches = new List<FRCApi.MatchResult>();
+         
+            rawMatches = api.getMatchResults<FRCApi.MatchResult>(Properties.Settings.Default.year, Properties.Settings.Default.eventCode);
 
             foreach (FRCApi.MatchResult frcMatch in rawMatches)
             {
@@ -477,9 +480,9 @@ namespace FRCVideoSplitter2
                 string destinationFile = Path.Combine(matchVideoDestinationPathTextBox.Text, videoName);
                 string command = "ffmpeg.exe";
                 string args = "";
-                if (Properties.Settings.Default.useScoreDisplayedTime)
+                if (Properties.Settings.Default.useScoreDisplayedTime && match.PostResultTime.HasValue)
                 {
-                    TimeSpan matchLength = ((match.PostResultTime - match.ActualStartTime).Add(TimeSpan.FromSeconds(15)));
+                    TimeSpan matchLength = (((DateTime)match.PostResultTime - match.ActualStartTime).Add(TimeSpan.FromSeconds(15)));
                     string matchLengthString = matchLength.ToString();//"hh:mm:ss");
                     args = "-ss " + startTime + " -i \"" + sourceFile + "\" -t " + matchLengthString + " -c:v copy -c:a copy \"" + destinationFile + "\"";
                 }
@@ -866,12 +869,32 @@ namespace FRCVideoSplitter2
 
         private void saveScoreDetailsButton_Click(object sender, EventArgs e)
         {
-            
+
             List<SplitterTypes.Match> includedMatches = matchesList.Where(i => i.Include == true).ToList();
 
-            List<FRCApi.ScoreDetails> scores = api.getScoreDetails(Properties.Settings.Default.year, Properties.Settings.Default.eventCode.ToLower(), "qual");
+            int year = Properties.Settings.Default.year;
 
-            scores.AddRange(api.getScoreDetails(Properties.Settings.Default.year, Properties.Settings.Default.eventCode.ToLower(), "playoff"));
+            string filePath;
+
+            if (year == 2016)
+            {
+                filePath = save2016ScoreDetails(includedMatches);
+                
+            }
+            else
+            {
+                filePath = save2015ScoreDetails(includedMatches);
+            }
+
+           
+            MessageBox.Show("Score details .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
+        }
+
+        private string save2016ScoreDetails(List<SplitterTypes.Match> includedMatches)
+        {
+            List<FRCApi.ScoreDetails2016> scores = api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, Properties.Settings.Default.eventCode.ToLower(), "qual");
+
+            scores.AddRange(api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, Properties.Settings.Default.eventCode.ToLower(), "playoff"));
 
             FRCApi.Event evt = eventsList.Find(i => i.name == Properties.Settings.Default.eventName);
             String fileName = "Score Details - " + Properties.Settings.Default.year.ToString() + " " + evt.name + ".csv";
@@ -888,30 +911,92 @@ namespace FRCVideoSplitter2
                 }
                 else
                 {
-                    foreach (FRCApi.AllianceScoreDetails alliance in scores[0].alliances)
+                    foreach (FRCApi.AllianceScoreDetails2016 alliance in scores[0].alliances)
                     {
                         foreach (PropertyInfo pi in alliance.GetType().GetProperties())
                         {
                             sb.AppendFormat("{0},", pi.Name);
                         }
                     }
-                }            
+                }
             }
 
             sb.AppendLine();
 
             foreach (SplitterTypes.Match match in includedMatches)
             {
-                FRCApi.ScoreDetails matchedScore = scores.Find(i => i.matchLevel == match.Level && i.matchNumber == match.MatchNumber);
+                FRCApi.ScoreDetails2016 matchedScore = scores.Find(i => i.matchLevel == match.Level && i.matchNumber == match.MatchNumber);
 
                 sb.AppendFormat("{0}{1}", matchedScore.ToString(), Environment.NewLine);
             }
 
             File.WriteAllText(filePath, sb.ToString());
-            MessageBox.Show("Score details .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
+
+            return filePath;
+        }
+
+        private string save2015ScoreDetails(List<SplitterTypes.Match> includedMatches)
+        {
+            List<FRCApi.ScoreDetails2015> scores = api.getScoreDetails<FRCApi.ScoreDetails2015>(Properties.Settings.Default.year, Properties.Settings.Default.eventCode.ToLower(), "qual");
+
+            scores.AddRange(api.getScoreDetails<FRCApi.ScoreDetails2015>(Properties.Settings.Default.year, Properties.Settings.Default.eventCode.ToLower(), "playoff"));
+
+            FRCApi.Event evt = eventsList.Find(i => i.name == Properties.Settings.Default.eventName);
+            String fileName = "Score Details - " + Properties.Settings.Default.year.ToString() + " " + evt.name + ".csv";
+
+            String filePath = Path.Combine(Properties.Settings.Default.matchVideoDestination, fileName);
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (PropertyInfo p in scores[0].GetType().GetProperties())
+            {
+                if (p.Name != "alliances")
+                {
+                    sb.AppendFormat("{0},", p.Name);
+                }
+                else
+                {
+                    foreach (FRCApi.AllianceScoreDetails2015 alliance in scores[0].alliances)
+                    {
+                        foreach (PropertyInfo pi in alliance.GetType().GetProperties())
+                        {
+                            sb.AppendFormat("{0},", pi.Name);
+                        }
+                    }
+                }
+            }
+
+            sb.AppendLine();
+
+            foreach (SplitterTypes.Match match in includedMatches)
+            {
+                FRCApi.ScoreDetails2015 matchedScore = scores.Find(i => i.matchLevel == match.Level && i.matchNumber == match.MatchNumber);
+
+                sb.AppendFormat("{0}{1}", matchedScore.ToString(), Environment.NewLine);
+            }
+
+            File.WriteAllText(filePath, sb.ToString());
+
+            return filePath;
         }
 
         private void getAllTheDataButton_Click(object sender, EventArgs e)
+        {
+            int year = Properties.Settings.Default.year;
+            string filePath;
+            if (year == 2016)
+            {
+                filePath = getAll2016Data();
+            }
+            else
+            {
+                filePath = getAll2015Data();
+            }
+
+            MessageBox.Show("Score details .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
+        }
+
+        private string getAll2016Data()
         {
             String fileName = "Score Details - All Events.csv";
 
@@ -919,7 +1004,7 @@ namespace FRCVideoSplitter2
 
             StringBuilder sb = new StringBuilder();
 
-            FRCApi.ScoreDetails sampleSD = new FRCApi.ScoreDetails();
+            FRCApi.AllianceScoreDetails2016 sampleSD = new FRCApi.AllianceScoreDetails2016();
 
             sb.AppendFormat("{0},{1},{2}", "eventCode", "startDate", "startTime");
 
@@ -928,12 +1013,12 @@ namespace FRCVideoSplitter2
             foreach (FRCApi.Event evt in eventsList)
             {
                 Console.WriteLine("Getting score detials for: " + evt.code);
-                List<FRCApi.ScoreDetails> scores = api.getScoreDetails(Properties.Settings.Default.year, evt.code.ToLower(), "qual");
-                List<FRCApi.MatchResult> results = api.getMatchResults(Properties.Settings.Default.year, evt.code.ToLower());
+                List<FRCApi.ScoreDetails2016> scores = api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, evt.code.ToLower(), "qual");
+                List<FRCApi.MatchResult> results = api.getMatchResults<FRCApi.MatchResult>(Properties.Settings.Default.year, evt.code.ToLower());
 
                 if (scores != null)
                 {
-                    scores.AddRange(api.getScoreDetails(Properties.Settings.Default.year, evt.code.ToLower(), "playoff"));
+                    scores.AddRange(api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, evt.code.ToLower(), "playoff"));
 
                     if (firstLoop)
                     {
@@ -945,7 +1030,7 @@ namespace FRCVideoSplitter2
                             }
                             else
                             {
-                                foreach (FRCApi.AllianceScoreDetails alliance in scores[0].alliances)
+                                foreach (FRCApi.AllianceScoreDetails2016 alliance in scores[0].alliances)
                                 {
                                     foreach (PropertyInfo pi in alliance.GetType().GetProperties())
                                     {
@@ -975,19 +1060,100 @@ namespace FRCVideoSplitter2
                         firstLoop = false;
                     }
 
-                    
 
-                    foreach (FRCApi.ScoreDetails score in scores)
+
+                    foreach (FRCApi.ScoreDetails2016 score in scores)
                     {
                         FRCApi.MatchResult mr = results.Find(i => i.matchNumber == score.matchNumber && i.tournamentLevel == score.matchLevel);
                         sb.AppendFormat("{0},{1},{2}{3}{4}", evt.code.ToLower(), evt.dateStart.ToShortDateString(), score.ToString(), mr.ToString(), Environment.NewLine);
                     }
-                    
+
                 }
             }
 
             File.WriteAllText(filePath, sb.ToString());
-            MessageBox.Show("Score details .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
+
+            return filePath;
+        }
+
+        private string getAll2015Data()
+        {
+            String fileName = "Score Details - All Events.csv";
+
+            String filePath = Path.Combine(Properties.Settings.Default.matchVideoDestination, fileName);
+
+            StringBuilder sb = new StringBuilder();
+
+            FRCApi.AllianceScoreDetails2015 sampleSD = new FRCApi.AllianceScoreDetails2015();
+
+            sb.AppendFormat("{0},{1},{2}", "eventCode", "startDate", "startTime");
+
+            bool firstLoop = true;
+
+            foreach (FRCApi.Event evt in eventsList)
+            {
+                Console.WriteLine("Getting score detials for: " + evt.code);
+                List<FRCApi.ScoreDetails2015> scores = api.getScoreDetails<FRCApi.ScoreDetails2015>(Properties.Settings.Default.year, evt.code.ToLower(), "qual");
+                List<FRCApi.MatchResult> results = api.getMatchResults<FRCApi.MatchResult>(Properties.Settings.Default.year, evt.code.ToLower());
+
+                if (scores != null)
+                {
+                    scores.AddRange(api.getScoreDetails<FRCApi.ScoreDetails2015>(Properties.Settings.Default.year, evt.code.ToLower(), "playoff"));
+
+                    if (firstLoop)
+                    {
+                        foreach (PropertyInfo p in scores[0].GetType().GetProperties())
+                        {
+                            if (p.Name != "alliances")
+                            {
+                                sb.AppendFormat("{0},", p.Name);
+                            }
+                            else
+                            {
+                                foreach (FRCApi.AllianceScoreDetails2015 alliance in scores[0].alliances)
+                                {
+                                    foreach (PropertyInfo pi in alliance.GetType().GetProperties())
+                                    {
+                                        sb.AppendFormat("{0},", pi.Name);
+                                    }
+                                }
+                            }
+                        }
+                        foreach (PropertyInfo p in results[0].GetType().GetProperties())
+                        {
+                            if (p.Name != "teams")
+                            {
+                                sb.AppendFormat("{0},", p.Name);
+                            }
+                            else
+                            {
+                                foreach (FRCApi.MatchResultsTeam team in results[0].teams)
+                                {
+                                    foreach (PropertyInfo pi in team.GetType().GetProperties())
+                                    {
+                                        sb.AppendFormat("{0},", pi.Name);
+                                    }
+                                }
+                            }
+                        }
+                        sb.AppendLine();
+                        firstLoop = false;
+                    }
+
+
+
+                    foreach (FRCApi.ScoreDetails2015 score in scores)
+                    {
+                        FRCApi.MatchResult mr = results.Find(i => i.matchNumber == score.matchNumber && i.tournamentLevel == score.matchLevel);
+                        sb.AppendFormat("{0},{1},{2}{3}{4}", evt.code.ToLower(), evt.dateStart.ToShortDateString(), score.ToString(), mr.ToString(), Environment.NewLine);
+                    }
+
+                }
+            }
+
+            File.WriteAllText(filePath, sb.ToString());
+
+            return filePath;
         }
 
         private void getPrevVideosButton_Click(object sender, EventArgs e)

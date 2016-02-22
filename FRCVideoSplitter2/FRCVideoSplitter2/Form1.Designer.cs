@@ -108,7 +108,7 @@
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
@@ -341,7 +341,6 @@
             this.getAllTheDataButton.TabIndex = 18;
             this.getAllTheDataButton.Text = "Get ALL THE DATA";
             this.getAllTheDataButton.UseVisualStyleBackColor = true;
-            this.getAllTheDataButton.Visible = false;
             this.getAllTheDataButton.Click += new System.EventHandler(this.getAllTheDataButton_Click);
             // 
             // groupBox1

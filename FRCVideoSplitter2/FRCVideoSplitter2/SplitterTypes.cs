@@ -20,7 +20,7 @@ namespace FRCVideoSplitter2
             private bool _include;
             private DateTime _timeStamp;
             private DateTime _actualStartTime;
-            private DateTime _postResultTime;
+            private DateTime? _postResultTime;
             private string _description;
             private string _redAlliance;
             private string _blueAlliance;
@@ -63,7 +63,7 @@ namespace FRCVideoSplitter2
                 }
             }
             
-            public DateTime PostResultTime
+            public DateTime? PostResultTime
             {
                 get { return _postResultTime; }
                 set
