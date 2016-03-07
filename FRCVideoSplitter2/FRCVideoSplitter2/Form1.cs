@@ -57,6 +57,8 @@ namespace FRCVideoSplitter2
             uploader.Upload_ProgressChanged += new EventHandler<long>(vid_ProgressChanged);
             uploader.UploadCompleted += new EventHandler<string>(vid_UploadCompleted);
             uploader.Upload_Failed += new EventHandler<string>(vid_UploadFailed);
+
+            api.loadRequestTimes();
             
         }
 
@@ -482,7 +484,7 @@ namespace FRCVideoSplitter2
                 string args = "";
                 if (Properties.Settings.Default.useScoreDisplayedTime && match.PostResultTime.HasValue)
                 {
-                    TimeSpan matchLength = (((DateTime)match.PostResultTime - match.ActualStartTime).Add(TimeSpan.FromSeconds(15)));
+                    TimeSpan matchLength = (((DateTime)match.PostResultTime - match.ActualStartTime).Add(TimeSpan.FromSeconds(30)));
                     string matchLengthString = matchLength.ToString();//"hh:mm:ss");
                     args = "-ss " + startTime + " -i \"" + sourceFile + "\" -t " + matchLengthString + " -c:v copy -c:a copy \"" + destinationFile + "\"";
                 }
@@ -1016,7 +1018,7 @@ namespace FRCVideoSplitter2
                 List<FRCApi.ScoreDetails2016> scores = api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, evt.code.ToLower(), "qual");
                 List<FRCApi.MatchResult> results = api.getMatchResults<FRCApi.MatchResult>(Properties.Settings.Default.year, evt.code.ToLower());
 
-                if (scores != null)
+                if (scores != null  && scores.Count > 0)
                 {
                     scores.AddRange(api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, evt.code.ToLower(), "playoff"));
 
@@ -1175,6 +1177,11 @@ namespace FRCVideoSplitter2
                 matchesList.First(i => i.Description == sVid.match).YouTubeId = sVid.youTube;
                 matchesList.First(i => i.Description == sVid.match).Include = true;
             }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            api.saveRequestTimes();
         }
     }
 }

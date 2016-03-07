@@ -5,15 +5,101 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Reflection;
+using System.Net;
 
 namespace FRCVideoSplitter2
 {
     class FRCApi
     {
         private string baseUrl = "https://frc-api.firstinspires.org/v2.0";
-        Communicator communicator = new Communicator();
+        public static string QualificationMatchesString = "qualification";
+        public static string PlayoffMatchesString = "playoff";
+        private Dictionary<string, DateTime> requestTimesDict = new Dictionary<string, DateTime>();
 
         public FRCApi() { }
+
+        public bool saveRequestTimes()
+        {
+            try
+            {
+                HelperDataStructures.WriteObjectToFile<Dictionary<string, DateTime>>("requestTimes.bin", requestTimesDict);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+        }
+
+        public bool loadRequestTimes()
+        {
+            try
+            {
+                this.requestTimesDict = HelperDataStructures.ReadObjectFromFile<Dictionary<string, DateTime>>("requestTimes.bin");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+        }
+
+
+        /// <summary>
+        /// Generic API request for generic objects
+        /// </summary>
+        /// <typeparam name="T">Object type to return</typeparam>
+        /// <param name="uri">FRC API endpoint</param>
+        /// <param name="useIfModifiedSince">boolean for whether or not to use the If-Modified-Since header</param>
+        /// <returns></returns>
+        private T handleAPIRequest<T>(string uri, bool useIfModifiedSince = true)
+        {
+            T apiObj;
+
+            try
+            {
+                if (!System.IO.File.Exists(HelperDataStructures.convertUriToFileName(uri, ".bin")))
+                {
+                    //if there isn't a cached file, we need to force an API update to create one.
+                    useIfModifiedSince = false;
+                }
+                string api_response = sendAndGetRawResponse(uri, useIfModifiedSince);
+
+                if (api_response != null)
+                {
+                    apiObj = JsonConvert.DeserializeObject<T>(api_response);
+                    HelperDataStructures.WriteObjectToFile<T>(HelperDataStructures.convertUriToFileName(uri, ".bin"), apiObj);
+                    return apiObj;
+                }
+                else
+                {
+                    return default(T);
+                }
+            }
+            catch (WebException ex)
+            {
+                if (((HttpWebResponse)((WebException)ex.InnerException).Response).StatusCode == HttpStatusCode.NotModified)
+                {
+                    //no changes were made, so load from cache
+                    try
+                    {
+                        Console.WriteLine("No API changes, pulling from cache.");
+                        apiObj = HelperDataStructures.ReadObjectFromFile<T>(HelperDataStructures.convertUriToFileName(uri, ".bin"));
+                        return apiObj;
+                    }
+                    catch (System.IO.FileNotFoundException fnfe)
+                    {
+                        throw new Exception("No cached object found.", fnfe);
+                    }
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+        }
 
         public List<int?> getTeamsAtEvent(int season, string eventCode)
         {
@@ -41,14 +127,41 @@ namespace FRCVideoSplitter2
         /// <param name="season">Year</param>
         /// <param name="eventKey">FRC event code</param>
         /// <returns></returns>
-        public List<T> getMatchResults<T>(int season, string eventKey)
+        public List<T> getMatchResults<T>(int season, string eventKey, bool useIfModifiedSince = true)
         {
             string uri = baseUrl + "/" + season.ToString() + "/matches/" + eventKey;
-            string api_response = communicator.sendAndGetRawResponse(uri);
+            MatchResultsList<T> results = handleAPIRequest<MatchResultsList<T>>(uri, useIfModifiedSince);
+            if (results != null)
+            {
+                return results.Matches;
+            }
+            else
+            {
+                return default(List<T>);
+            }
+            /*
+            try
+            {
+                string api_response = communicator.sendAndGetRawResponse(uri, useIfModifiedSince);
+                results = JsonConvert.DeserializeObject<MatchResultsList<T>>(api_response).Matches;
+                HelperDataStructures.WriteObjectToFile<List<T>>(HelperDataStructures.convertUriToFileName(uri, ".bin"), results);
 
-            List<T> results = JsonConvert.DeserializeObject<MatchResultsList<T>>(api_response).Matches;
-
-            return results;
+                return results;
+            }
+            catch (Exception ex)
+            {
+                if (((HttpWebResponse)((WebException)ex.InnerException).Response).StatusCode == HttpStatusCode.NotModified)
+                {
+                    //no changes were made, so load from cache
+                    results = HelperDataStructures.ReadObjectFromFile<List<T>>(HelperDataStructures.convertUriToFileName(uri, ".bin"));
+                    return results;
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+             * */
         }
 
 
@@ -57,25 +170,59 @@ namespace FRCVideoSplitter2
         /// </summary>
         /// <param name="season">Year</param>
         /// <returns></returns>
-        public List<Event> getEvents(int season)
+        public List<Event> getEvents(int season, bool useIfModifiedSince = true)
         {
             string uri = baseUrl + "/" + season.ToString() + "/events";
-            string api_response = communicator.sendAndGetRawResponse(uri);
 
-            List<Event> events = JsonConvert.DeserializeObject<EventsList>(api_response).Events;
+            EventsList eventsList = handleAPIRequest<EventsList>(uri, useIfModifiedSince);
 
-            return events;
+            if (eventsList != null)
+            {
+                return eventsList.Events;
+            }
+            else
+            {
+                return default(List<Event>);
+            }
+
+            /*
+            List<Event> events;
+
+            try
+            {
+                string api_response = communicator.sendAndGetRawResponse(uri, useIfModifiedSince);
+
+                events = JsonConvert.DeserializeObject<EventsList>(api_response).Events;
+                HelperDataStructures.WriteObjectToFile<List<Event>>(HelperDataStructures.convertUriToFileName(uri, ".bin"), events);
+                return events;
+            }
+            catch (Exception ex)
+            {
+                if (((HttpWebResponse)((WebException)ex.InnerException).Response).StatusCode == HttpStatusCode.NotModified)
+                {
+                    //no changes were made, so load from cache
+                    events = HelperDataStructures.ReadObjectFromFile<List<Event>>(HelperDataStructures.convertUriToFileName(uri, ".bin"));
+                    return events;
+                }
+                else
+                {
+                    throw ex;
+                }
+            }            
+             * */
         }
+
+
 
         /// <summary>
         /// Gets the raw JSON string for events lists from the FRC API
         /// </summary>
         /// <param name="season">Year</param>
         /// <returns></returns>
-        public string getEventsListJsonString(int season)
+        public string getEventsListJsonString(int season, bool useIfModifiedSince = true)
         {
             string uri = baseUrl + "/" + season.ToString() + "/events";
-            string api_response = communicator.sendAndGetRawResponse(uri);
+            string api_response = sendAndGetRawResponse(uri);
 
             return api_response;
         }
@@ -87,9 +234,20 @@ namespace FRCVideoSplitter2
         /// <param name="eventCode">Event</param>
         /// <param name="tournamentLevel">Level</param>
         /// <returns></returns>
-        public List<T> getScoreDetails<T>(int season, string eventCode, string tournamentLevel)
+        public List<T> getScoreDetails<T>(int season, string eventCode, string tournamentLevel, bool useIfModifiedSince = true)
         {
             string uri = baseUrl + "/" + season.ToString() + "/scores/" + eventCode + "/" + tournamentLevel;
+            ScoreDetailsList<T> details = handleAPIRequest<ScoreDetailsList<T>>(uri, useIfModifiedSince);
+
+            if (details != null)
+            {
+                return details.MatchScores;
+            }
+            else
+            {
+                return default(List<T>);
+            }
+            /*
             string api_response = communicator.sendAndGetRawResponse(uri);
 
             if (api_response != null)
@@ -101,13 +259,14 @@ namespace FRCVideoSplitter2
             {
                 return null;
             }
+             * */
 
         }
 
-        public List<ScheduleMatch> getSchedule(int season, string eventCode, string tournamentLevel)
+        public List<ScheduleMatch> getSchedule(int season, string eventCode, string tournamentLevel, bool useIfModifiedSince = true)
         {
             string uri = baseUrl + "/" + season.ToString() + "/schedule/" + eventCode + "/" + tournamentLevel;
-            string api_response = communicator.sendAndGetRawResponse(uri);
+            string api_response = sendAndGetRawResponse(uri);
             //Console.WriteLine(api_response);
             if (api_response != null)
             {
@@ -120,19 +279,18 @@ namespace FRCVideoSplitter2
             }
         }
 
-        public List<HybridScheduleMatch> getHybridSchedule(int season, string eventCode, string tournamentLevel)
+        public List<HybridScheduleMatch> getHybridSchedule(int season, string eventCode, string tournamentLevel, bool useIfModifiedSince = true)
         {
             string uri = baseUrl + "/" + season.ToString() + "/schedule/" + eventCode + "/" + tournamentLevel + "/hybrid";
-            string api_response = communicator.sendAndGetRawResponse(uri);
-            //Console.WriteLine(api_response);
-            if (api_response != null)
+            HybridSchedule sheduleContainer = handleAPIRequest<HybridSchedule>(uri, useIfModifiedSince);
+
+            if (sheduleContainer != null)
             {
-                List<HybridScheduleMatch> hybridSchedule = JsonConvert.DeserializeObject<HybridSchedule>(api_response).Schedule;
-                return hybridSchedule;
+                return sheduleContainer.Schedule;
             }
             else
             {
-                return null;
+                return default(List<HybridScheduleMatch>);
             }
         }
 
@@ -143,10 +301,10 @@ namespace FRCVideoSplitter2
         /// <param name="season"></param>
         /// <param name="eventCode"></param>
         /// <returns></returns>
-        public List<T> getEventRankings<T>(int season, string eventCode)
+        public List<T> getEventRankings<T>(int season, string eventCode, bool useIfModifiedSince = true)
         {
             string uri = baseUrl + "/" + season.ToString() + "/rankings/" + eventCode;
-            string api_response = communicator.sendAndGetRawResponse(uri);
+            string api_response = sendAndGetRawResponse(uri);
             if (api_response != null)
             {
                 List<T> rankings = JsonConvert.DeserializeObject<EventRankings<T>>(api_response).Rankings;
@@ -400,6 +558,27 @@ namespace FRCVideoSplitter2
                     return alliance.Substring(0, alliance.Length - 1);
                 }
             }
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (PropertyInfo propertyInfo in this.GetType().GetProperties())
+                {
+                    if (propertyInfo.Name != "teams")
+                    {
+                        sb.AppendFormat("{0},", propertyInfo.GetValue(this, null));
+                    }
+                    else
+                    {
+                        foreach (MatchResultsTeam t in this.teams)
+                        {
+                            sb.AppendFormat("{0},", t.ToString());
+                        }
+                    }
+                }
+
+                return sb.ToString();
+            }
         }
 
         /// <summary>
@@ -413,15 +592,15 @@ namespace FRCVideoSplitter2
             public bool dq { get; set; }
 
             public MatchResultsTeam() { }
-        }
 
-        public class MatchScore2016
-        {
-            public string matchLevel { get; set; }
-            public int matchNumber { get; set; }
-            public string audienceGroup { get; set; }
-            public List<AllianceScoreDetails2016> alliances { get; set; }
-
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                
+                sb.AppendFormat("{0},{1},{2}", this.teamNumber, this.station, this.dq);
+                
+                return sb.ToString();
+            }
         }
 
         /// <summary>
@@ -531,7 +710,6 @@ namespace FRCVideoSplitter2
         {
             public string matchLevel { get; set; }
             public int matchNumber { get; set; }
-            public string audienceGroup { get; set; }
             public List<AllianceScoreDetails2016> alliances { get; set; }
 
             //There's 2 alliances, so let's just add them.
@@ -668,51 +846,67 @@ namespace FRCVideoSplitter2
         }
 
 
-        /// <summary>
-        /// Communicates with the FRC API
-        /// </summary>
-        private class Communicator
+        public string sendAndGetRawResponse(string uri, bool useIfModifiedSince = true)
         {
-            public string sendAndGetRawResponse(string uri)
+            var request = System.Net.WebRequest.Create(uri) as System.Net.HttpWebRequest;
+            request.KeepAlive = true;
+
+            ///REMOVE AFTER FRC FIXES IT?
+            //request.ServerCertificateValidationCallback += (o, c, ch, er) => true;
+
+            string token = "TYTREMBLAY:C272D991-944E-49D7-B10E-27BA5EBB598B";
+
+            string encodedToken = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(token));
+
+            request.Headers.Add("Authorization: Basic " + encodedToken);
+
+            if (useIfModifiedSince)
             {
-                var request = System.Net.WebRequest.Create(uri) as System.Net.HttpWebRequest;
-                request.KeepAlive = true;
-
-                ///REMOVE AFTER FRC FIXES IT?
-                //request.ServerCertificateValidationCallback += (o, c, ch, er) => true;
-
-                string token = "TYTREMBLAY:C272D991-944E-49D7-B10E-27BA5EBB598B";
-
-                string encodedToken = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(token));
-
-                request.Headers.Add("Authorization: Basic " + encodedToken);
-
-                request.Method = "GET";
-
-                request.Accept = "application/json";
-                request.ContentLength = 0;
-
-                string responseContent = null;
-
-                try
+                DateTime lastApiRequestDateTime;
+                if (requestTimesDict.TryGetValue(uri, out lastApiRequestDateTime))
                 {
-                    using (var response = request.GetResponse() as System.Net.HttpWebResponse)
+                    request.IfModifiedSince = lastApiRequestDateTime;
+                }
+                else
+                {
+                    //we haven't done a request for this yet, so add the current time for later use.
+                    requestTimesDict.Add(uri, DateTime.Now);
+                }
+                //DateTime lastApiRequestDateTime = Properties.Settings.Default.lastApiRequestDateTime;
+
+            }
+
+            request.Method = "GET";
+
+            request.Accept = "application/json";
+            request.ContentLength = 0;
+
+            string responseContent = null;
+
+            try
+            {
+                using (var response = request.GetResponse() as System.Net.HttpWebResponse)
+                {
+                    using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
                     {
-                        using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
-                        {
-                            responseContent = reader.ReadToEnd();
-                        }
+                        responseContent = reader.ReadToEnd();
                     }
 
-                    return responseContent;
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
 
-                }
+
                 return responseContent;
             }
+            catch (WebException ex)
+            {
+                if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotModified)
+                {
+                    //no changes have been made
+                    throw new WebException("API Not Modified", ex);
+                }
+            }
+
+            return null;
         }
     }
 }

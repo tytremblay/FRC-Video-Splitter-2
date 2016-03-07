@@ -169,6 +169,7 @@ namespace FRCVideoSplitter2
                 this.ActualStartTime = frcMatch.actualStartTime;
                 this.PostResultTime = frcMatch.postResultTime;
                 
+                /*
                 if (frcMatch.description.StartsWith("Qualification "))
                 {
                     this.Description = "Q" + frcMatch.description.Substring(14);
@@ -183,9 +184,10 @@ namespace FRCVideoSplitter2
                 }
                 else 
                 {
-                    this.Description = "F" + frcMatch.description.Substring(7);
+                    this.Description = frcMatch.description;
                 }
-
+                 * */
+                this.Description = frcMatch.description;
                 this.RedAlliance = String.Join(", ", frcMatch.teams.Where(team => team.station.StartsWith("Red")).Select(n => n.teamNumber.ToString()).ToList());
                 this.BlueAlliance = String.Join(", ", frcMatch.teams.Where(team => team.station.StartsWith("Blue")).Select(n => n.teamNumber.ToString()).ToList());
 

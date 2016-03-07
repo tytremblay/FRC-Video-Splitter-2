@@ -334,7 +334,6 @@
             // 
             // getAllTheDataButton
             // 
-            this.getAllTheDataButton.Enabled = false;
             this.getAllTheDataButton.Location = new System.Drawing.Point(14, 562);
             this.getAllTheDataButton.Name = "getAllTheDataButton";
             this.getAllTheDataButton.Size = new System.Drawing.Size(399, 34);
@@ -414,6 +413,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "FRC Video Splitter";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
