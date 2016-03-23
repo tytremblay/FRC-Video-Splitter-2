@@ -62,7 +62,7 @@ namespace FRCVideoSplitter2
                     this.NotifyPropertyChanged("AutoStartTime");
                 }
             }
-            
+
             public DateTime? PostResultTime
             {
                 get { return _postResultTime; }
@@ -168,7 +168,28 @@ namespace FRCVideoSplitter2
                 this.TimeStamp = new DateTime();
                 this.ActualStartTime = frcMatch.actualStartTime;
                 this.PostResultTime = frcMatch.postResultTime;
-                
+                Dictionary<int, string> matchKeys = new Dictionary<int, string>();
+                matchKeys.Add(1, "QF1M1");
+                matchKeys.Add(2, "QF2M1");
+                matchKeys.Add(3, "QF3M1");
+                matchKeys.Add(4, "QF4M1");
+                matchKeys.Add(5, "QF1M2");
+                matchKeys.Add(6, "QF2M2");
+                matchKeys.Add(7, "QF3M2");
+                matchKeys.Add(8, "QF4M2");
+                matchKeys.Add(9, "QF1M3");
+                matchKeys.Add(10, "QF2M3");
+                matchKeys.Add(11, "QF3M3");
+                matchKeys.Add(12, "QF4M3");
+                matchKeys.Add(13, "SF1M1");
+                matchKeys.Add(14, "SF2M1");
+                matchKeys.Add(15, "SF1M2");
+                matchKeys.Add(16, "SF2M2");
+                matchKeys.Add(17, "SF1M3");
+                matchKeys.Add(18, "SF2M3");
+                matchKeys.Add(19, "F1M1");
+                matchKeys.Add(20, "F1M2");
+                matchKeys.Add(21, "F1M3");
                 /*
                 if (frcMatch.description.StartsWith("Qualification "))
                 {
@@ -187,7 +208,16 @@ namespace FRCVideoSplitter2
                     this.Description = frcMatch.description;
                 }
                  * */
-                this.Description = frcMatch.description;
+
+                if (frcMatch.tournamentLevel == "Qualification")
+                {
+                    this.Description = "Q" + frcMatch.matchNumber;
+                }
+                else
+                {
+                    this.Description = matchKeys[frcMatch.matchNumber];
+                }
+                //this.Description = frcMatch.description;
                 this.RedAlliance = String.Join(", ", frcMatch.teams.Where(team => team.station.StartsWith("Red")).Select(n => n.teamNumber.ToString()).ToList());
                 this.BlueAlliance = String.Join(", ", frcMatch.teams.Where(team => team.station.StartsWith("Blue")).Select(n => n.teamNumber.ToString()).ToList());
 
@@ -252,5 +282,8 @@ namespace FRCVideoSplitter2
                 return eventCode + "," + match + "," + path + "," + youTube;
             }
         }
+
+
     }
+    
 }

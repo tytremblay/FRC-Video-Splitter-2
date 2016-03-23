@@ -147,6 +147,12 @@ namespace FRCVideoSplitter2
             foreach (FRCApi.MatchResult frcMatch in rawMatches)
             {
                 matchesList.Add(new SplitterTypes.Match(frcMatch));
+                /*
+                if (frcMatch.tournamentLevel != "Qualification")
+                {
+                    Console.WriteLine(frcMatch.tournamentLevel);
+                }
+                */
             }
 
             this.matchesDataGridView.DataSource = matchesList;

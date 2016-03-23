@@ -35,7 +35,7 @@ namespace FRCVideoSplitter2
                         // This OAuth 2.0 access scope allows for full read/write access to the
                         // authenticated user's account.
                         new[] { YouTubeService.Scope.Youtube },
-                        "user",
+                        "smedia@nefirst.org",
                         CancellationToken.None,
                         new FileDataStore(this.GetType().ToString())
                         );
