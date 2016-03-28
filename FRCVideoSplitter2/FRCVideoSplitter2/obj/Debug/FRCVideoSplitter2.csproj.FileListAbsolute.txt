@@ -106,7 +106,6 @@ C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSpli
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.exe
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.pdb
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\ffmpeg.exe
-C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\client_secrets.json
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.exe.manifest
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.application
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.exe

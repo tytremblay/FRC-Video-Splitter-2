@@ -21,6 +21,7 @@ namespace FRCVideoSplitter2
         internal class VideoUploader
         {
             UserCredential credential;
+            Assembly _assembly;
 
             /// <summary>
             /// Set the credentials using the application's client secrets.
@@ -28,14 +29,16 @@ namespace FRCVideoSplitter2
             /// <returns></returns>
             public async Task SetCredentials()
             {
-                using (var stream = new FileStream("client_secrets.json", FileMode.Open, FileAccess.Read))
+                _assembly = Assembly.GetExecutingAssembly();
+                var stream = _assembly.GetManifestResourceStream("FRCVideoSplitter2.client_secrets.json");
+                using (stream) // new FileStream("client_secrets.json", FileMode.Open, FileAccess.Read))
                 {
                     credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                         GoogleClientSecrets.Load(stream).Secrets,
                         // This OAuth 2.0 access scope allows for full read/write access to the
                         // authenticated user's account.
                         new[] { YouTubeService.Scope.Youtube },
-                        "smedia@nefirst.org",
+                        "user",
                         CancellationToken.None,
                         new FileDataStore(this.GetType().ToString())
                         );

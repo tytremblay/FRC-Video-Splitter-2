@@ -599,7 +599,7 @@ namespace FRCVideoSplitter2
             {
                 await uploader.SetCredentials();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 MessageBox.Show("Error setting Youtube credentials. If running/building from source, make sure to get and embed a client_secrets.json file for the Google Developers API. Otherwise "
                     + "make sure that you have a working internet connection and that this application is allowed through your firewall.");
@@ -1073,7 +1073,10 @@ namespace FRCVideoSplitter2
                     foreach (FRCApi.ScoreDetails2016 score in scores)
                     {
                         FRCApi.MatchResult mr = results.Find(i => i.matchNumber == score.matchNumber && i.tournamentLevel == score.matchLevel);
-                        sb.AppendFormat("{0},{1},{2}{3}{4}", evt.code.ToLower(), evt.dateStart.ToShortDateString(), score.ToString(), mr.ToString(), Environment.NewLine);
+                        if (mr != null)
+                        {
+                            sb.AppendFormat("{0},{1},{2}{3}{4}", evt.code.ToLower(), evt.dateStart.ToShortDateString(), score.ToString(), mr.ToString(), Environment.NewLine);
+                        }
                     }
 
                 }
