@@ -11,6 +11,7 @@ namespace FRCVideoSplitter2
 {
     class SplitterTypes
     {
+        [Serializable]
         /// <summary>
         /// Match model that holds the information we care about in FRC Splitter.
         /// Displays nicely in a datagridview

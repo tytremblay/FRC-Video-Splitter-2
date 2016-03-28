@@ -52,6 +52,10 @@ namespace FRCVideoSplitter2
                 Properties.Settings.Default.firstTimeRunning = false;
                 Properties.Settings.Default.Save();
             }
+
+            Properties.Settings.Default.currentFileName = "";
+            Properties.Settings.Default.Save();
+
             updateObjects();
             
             uploader.Upload_ProgressChanged += new EventHandler<long>(vid_ProgressChanged);
@@ -519,7 +523,11 @@ namespace FRCVideoSplitter2
 
             }
 
-            string importFilePath = Path.Combine(matchVideoDestinationPathTextBox.Text, eventsComboBox.Text + ".csv");
+            string importFilePath = Path.Combine(matchVideoDestinationPathTextBox.Text, eventsComboBox.Text + ".splt");
+
+            HelperDataStructures.WriteObjectToFile<BindingList<SplitterTypes.Match>>(importFilePath, matchesList);
+
+            /*
             if (!File.Exists(importFilePath))
             {
                 using (StreamWriter sw = File.CreateText(importFilePath))
@@ -540,6 +548,7 @@ namespace FRCVideoSplitter2
                     }
                 }
             }
+            */
 
             progress.Close();
         }
@@ -1191,6 +1200,45 @@ namespace FRCVideoSplitter2
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             api.saveRequestTimes();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.DefaultExt = ".splt";
+            DialogResult result = openFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                matchesList = HelperDataStructures.ReadObjectFromFile<BindingList<SplitterTypes.Match>>(openFileDialog1.FileName);
+                Properties.Settings.Default.currentFileName = openFileDialog1.FileName;
+                Properties.Settings.Default.Save();
+                this.matchesDataGridView.DataSource = matchesList;
+                this.SetDataGridViewFormatting();
+            }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.currentFileName == "")
+            {
+                saveAsToolStripMenuItem_Click(sender, e);
+            }
+            else
+            {
+                HelperDataStructures.WriteObjectToFile<BindingList<SplitterTypes.Match>>(Properties.Settings.Default.currentFileName, matchesList);
+            }
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.Filter = "Splitter files (*.splt) | *.splt|All Files (*.*)|*.*";
+            saveFileDialog1.FileName = Properties.Settings.Default.year + " " + eventsComboBox.Text + ".splt";
+            DialogResult result = saveFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                HelperDataStructures.WriteObjectToFile<BindingList<SplitterTypes.Match>>(saveFileDialog1.FileName, matchesList);
+                Properties.Settings.Default.currentFileName = saveFileDialog1.FileName;
+                Properties.Settings.Default.Save();
+            }
         }
     }
 }
