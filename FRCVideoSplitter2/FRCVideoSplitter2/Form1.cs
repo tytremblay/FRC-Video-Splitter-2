@@ -151,6 +151,7 @@ namespace FRCVideoSplitter2
             foreach (FRCApi.MatchResult frcMatch in rawMatches)
             {
                 matchesList.Add(new SplitterTypes.Match(frcMatch));
+                
                 /*
                 if (frcMatch.tournamentLevel != "Qualification")
                 {
@@ -739,7 +740,7 @@ namespace FRCVideoSplitter2
                 }
                 else if (matchesList[videoUploadIndex].VideoPath != "")
                 {
-                    String videoTitle = matchesList[videoUploadIndex].Description + " - " + Properties.Settings.Default.year.ToString() + " " + evt.name;
+                    String videoTitle = "[" + matchesList[videoUploadIndex].Description + "] " + Properties.Settings.Default.year.ToString() + " " + evt.name;
 
                     //If there's already a video in the playlist by this name, grab the id and don't upload this video
                     //If the user wants to upload this video instead, they'll have to remove the other video from the playlist
@@ -756,6 +757,7 @@ namespace FRCVideoSplitter2
                     sb.AppendLine(videoTitle);
                     sb.AppendLine("Red (" + matchesList[videoUploadIndex].RedAlliance + ") - " + matchesList[videoUploadIndex].RedScore.ToString());
                     sb.AppendLine("Blue (" + matchesList[videoUploadIndex].BlueAlliance + ") - " + matchesList[videoUploadIndex].BlueScore.ToString());
+                    sb.AppendLine("http://www.thebluealliance.com/match/" + Properties.Settings.Default.year.ToString() + evt.code.ToLower() + "_" + matchesList[videoUploadIndex].Description.ToLower());
                     sb.AppendLine("Uploaded by FRC Video Splitter (https://github.com/tytremblay/FRC-Video-Splitter-2)");
                     String videoDesc = sb.ToString();
 
@@ -1016,6 +1018,9 @@ namespace FRCVideoSplitter2
         private string getAll2016Data()
         {
             String fileName = "Score Details - All Events.csv";
+            Dictionary<string, double> captureCounts = new Dictionary<string, double>();
+            Dictionary<string, double> matchCounts = new Dictionary<string, double>();
+            Dictionary<string, double> capturePercentages = new Dictionary<string, double>();
 
             String filePath = Path.Combine(Properties.Settings.Default.matchVideoDestination, fileName);
 
@@ -1085,11 +1090,58 @@ namespace FRCVideoSplitter2
                         if (mr != null)
                         {
                             sb.AppendFormat("{0},{1},{2}{3}{4}", evt.code.ToLower(), evt.dateStart.ToShortDateString(), score.ToString(), mr.ToString(), Environment.NewLine);
+                            foreach (FRCApi.AllianceScoreDetails2016 asd in score.alliances)
+                            {
+                                foreach (FRCApi.MatchResultsTeam t in mr.teams.FindAll(i => i.station.Contains(asd.alliance)))
+                                {
+                                    string key = evt.code + t.teamNumber.ToString();
+                                    if (asd.teleopTowerCaptured)
+                                    {
+                                        if (captureCounts.ContainsKey(key))
+                                        {
+                                            captureCounts[key] += 1;
+                                        }
+                                        else
+                                        {
+                                            captureCounts.Add(key, 1);
+                                        }
+                                    }
+                                    if (matchCounts.ContainsKey(key))
+                                    {
+                                        matchCounts[key] += 1;
+                                    }
+                                    else
+                                    {
+                                        matchCounts.Add(key, 1);
+                                    }
+                                }
+                                
+                            }
+
                         }
                     }
 
                 }
             }
+
+            foreach (KeyValuePair<string, double> entry in captureCounts)
+            {
+                capturePercentages.Add(entry.Key, captureCounts[entry.Key] / matchCounts[entry.Key]);
+            }
+
+            // Reverse sort.
+            // ... Can be looped over in the same way as above.
+            var items = from pair in capturePercentages
+                        orderby pair.Value descending
+                        select pair;
+
+            StringBuilder sb2 = new StringBuilder();
+
+            foreach (KeyValuePair<string, double> entry in items)
+            {
+                sb2.AppendFormat("{0},{1},{2},{3}{4}", entry.Key, captureCounts[entry.Key], matchCounts[entry.Key], entry.Value, Environment.NewLine);
+            }
+            File.WriteAllText(Path.Combine(Properties.Settings.Default.matchVideoDestination, "capturePercentages.csv"), sb2.ToString());
 
             File.WriteAllText(filePath, sb.ToString());
 
@@ -1238,6 +1290,28 @@ namespace FRCVideoSplitter2
                 HelperDataStructures.WriteObjectToFile<BindingList<SplitterTypes.Match>>(saveFileDialog1.FileName, matchesList);
                 Properties.Settings.Default.currentFileName = saveFileDialog1.FileName;
                 Properties.Settings.Default.Save();
+            }
+        }
+
+        private void importVideosButton_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.Multiselect = true; 
+            DialogResult result = openFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                List<FileInfo> selectedFiles = new List<FileInfo>();
+
+                foreach (String file in openFileDialog1.FileNames)
+                {
+                    selectedFiles.Add(new FileInfo(file));
+                }
+
+                selectedFiles = selectedFiles.OrderBy(f => f.LastWriteTime).ToList();
+
+                foreach (FileInfo file in selectedFiles)
+                {
+                    matchesList.First(i => i.VideoPath == "" && i.Include == true).VideoPath = file.FullName;
+                }
             }
         }
     }

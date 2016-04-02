@@ -37,7 +37,7 @@ namespace FRCVideoSplitter2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2015")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2016")]
         public int year {
             get {
                 return ((int)(this["year"]));
@@ -133,7 +133,7 @@ namespace FRCVideoSplitter2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool useScoreDisplayedTime {
             get {
                 return ((bool)(this["useScoreDisplayedTime"]));

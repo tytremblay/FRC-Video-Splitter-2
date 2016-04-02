@@ -212,7 +212,7 @@ namespace FRCVideoSplitter2
 
                 if (frcMatch.tournamentLevel == "Qualification")
                 {
-                    this.Description = "Q" + frcMatch.matchNumber;
+                    this.Description = "QM" + frcMatch.matchNumber;
                 }
                 else
                 {

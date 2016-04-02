@@ -30,6 +30,9 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,11 +64,9 @@
             this.getAllTheDataButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.importVideosButton = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.matchesDataGridView)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -98,10 +99,31 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(50, 29);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(159, 30);
+            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(159, 30);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(159, 30);
+            this.saveAsToolStripMenuItem.Text = "Save As";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(124, 30);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(159, 30);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -211,10 +233,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.matchesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.matchesDataGridView.Location = new System.Drawing.Point(634, 51);
+            this.matchesDataGridView.Location = new System.Drawing.Point(614, 51);
             this.matchesDataGridView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.matchesDataGridView.Name = "matchesDataGridView";
-            this.matchesDataGridView.Size = new System.Drawing.Size(1436, 872);
+            this.matchesDataGridView.Size = new System.Drawing.Size(1456, 872);
             this.matchesDataGridView.TabIndex = 9;
             this.matchesDataGridView.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.matchesDataGridView_CellMouseDown);
             this.matchesDataGridView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.matchesDataGridView_CellMouseUp);
@@ -226,7 +248,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(362, 45);
+            this.checkBox1.Location = new System.Drawing.Point(368, 44);
             this.checkBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(217, 24);
@@ -271,12 +293,12 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(68, 80);
+            this.label4.Location = new System.Drawing.Point(19, 78);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(58, 20);
+            this.label4.Size = new System.Drawing.Size(106, 20);
             this.label4.TabIndex = 14;
-            this.label4.Text = "Output";
+            this.label4.Text = "Match Videos";
             // 
             // label3
             // 
@@ -312,10 +334,10 @@
             // 
             // splitVideosButton
             // 
-            this.splitVideosButton.Location = new System.Drawing.Point(21, 534);
+            this.splitVideosButton.Location = new System.Drawing.Point(21, 521);
             this.splitVideosButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.splitVideosButton.Name = "splitVideosButton";
-            this.splitVideosButton.Size = new System.Drawing.Size(598, 52);
+            this.splitVideosButton.Size = new System.Drawing.Size(585, 52);
             this.splitVideosButton.TabIndex = 18;
             this.splitVideosButton.Text = "Split Videos";
             this.splitVideosButton.UseVisualStyleBackColor = true;
@@ -323,10 +345,10 @@
             // 
             // uploadToYouTubeButton
             // 
-            this.uploadToYouTubeButton.Location = new System.Drawing.Point(21, 599);
+            this.uploadToYouTubeButton.Location = new System.Drawing.Point(21, 586);
             this.uploadToYouTubeButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uploadToYouTubeButton.Name = "uploadToYouTubeButton";
-            this.uploadToYouTubeButton.Size = new System.Drawing.Size(598, 52);
+            this.uploadToYouTubeButton.Size = new System.Drawing.Size(585, 52);
             this.uploadToYouTubeButton.TabIndex = 18;
             this.uploadToYouTubeButton.Text = "Upload Included Videos To YouTube";
             this.uploadToYouTubeButton.UseVisualStyleBackColor = true;
@@ -340,10 +362,10 @@
             // 
             // tbaSpreadsheetButton
             // 
-            this.tbaSpreadsheetButton.Location = new System.Drawing.Point(21, 664);
+            this.tbaSpreadsheetButton.Location = new System.Drawing.Point(21, 651);
             this.tbaSpreadsheetButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tbaSpreadsheetButton.Name = "tbaSpreadsheetButton";
-            this.tbaSpreadsheetButton.Size = new System.Drawing.Size(598, 52);
+            this.tbaSpreadsheetButton.Size = new System.Drawing.Size(585, 52);
             this.tbaSpreadsheetButton.TabIndex = 18;
             this.tbaSpreadsheetButton.Text = "Write TBA Upload File";
             this.tbaSpreadsheetButton.UseVisualStyleBackColor = true;
@@ -351,10 +373,10 @@
             // 
             // saveScoreDetailsButton
             // 
-            this.saveScoreDetailsButton.Location = new System.Drawing.Point(21, 729);
+            this.saveScoreDetailsButton.Location = new System.Drawing.Point(21, 716);
             this.saveScoreDetailsButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.saveScoreDetailsButton.Name = "saveScoreDetailsButton";
-            this.saveScoreDetailsButton.Size = new System.Drawing.Size(598, 52);
+            this.saveScoreDetailsButton.Size = new System.Drawing.Size(585, 52);
             this.saveScoreDetailsButton.TabIndex = 18;
             this.saveScoreDetailsButton.Text = "Save Score Details";
             this.saveScoreDetailsButton.UseVisualStyleBackColor = true;
@@ -363,10 +385,10 @@
             // getAllTheDataButton
             // 
             this.getAllTheDataButton.Enabled = false;
-            this.getAllTheDataButton.Location = new System.Drawing.Point(21, 794);
+            this.getAllTheDataButton.Location = new System.Drawing.Point(21, 781);
             this.getAllTheDataButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getAllTheDataButton.Name = "getAllTheDataButton";
-            this.getAllTheDataButton.Size = new System.Drawing.Size(598, 52);
+            this.getAllTheDataButton.Size = new System.Drawing.Size(585, 52);
             this.getAllTheDataButton.TabIndex = 18;
             this.getAllTheDataButton.Text = "Get ALL THE DATA";
             this.getAllTheDataButton.UseVisualStyleBackColor = true;
@@ -397,21 +419,33 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.sourceVideoBrowseButton);
+            this.groupBox2.Controls.Add(this.importVideosButton);
             this.groupBox2.Controls.Add(this.matchVideoBrowseButton);
             this.groupBox2.Location = new System.Drawing.Point(21, 235);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox2.Size = new System.Drawing.Size(585, 128);
+            this.groupBox2.Size = new System.Drawing.Size(585, 166);
             this.groupBox2.TabIndex = 20;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "File Locations";
+            this.groupBox2.Text = "Video Locations";
+            // 
+            // importVideosButton
+            // 
+            this.importVideosButton.Location = new System.Drawing.Point(135, 111);
+            this.importVideosButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.importVideosButton.Name = "importVideosButton";
+            this.importVideosButton.Size = new System.Drawing.Size(185, 35);
+            this.importVideosButton.TabIndex = 16;
+            this.importVideosButton.Text = "Import Videos";
+            this.importVideosButton.UseVisualStyleBackColor = true;
+            this.importVideosButton.Click += new System.EventHandler(this.importVideosButton_Click);
             // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.getTimestampButton);
             this.groupBox3.Controls.Add(this.checkBox1);
-            this.groupBox3.Location = new System.Drawing.Point(21, 389);
+            this.groupBox3.Location = new System.Drawing.Point(21, 411);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -419,27 +453,6 @@
             this.groupBox3.TabIndex = 21;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Generate Video Timestamps";
-            // 
-            // openToolStripMenuItem
-            // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
-            this.openToolStripMenuItem.Text = "Open";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
-            // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
-            this.saveAsToolStripMenuItem.Text = "Save As";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -516,6 +529,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.Button importVideosButton;
     }
 }
 
