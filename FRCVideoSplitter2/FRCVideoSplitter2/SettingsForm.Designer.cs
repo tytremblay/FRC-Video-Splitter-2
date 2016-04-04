@@ -35,13 +35,16 @@
             this.matchLengthBox = new System.Windows.Forms.TextBox();
             this.saveButton = new System.Windows.Forms.Button();
             this.useScoreDisplayedTimeCheckbox = new System.Windows.Forms.CheckBox();
+            this.endOfVideoPaddingBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // RefreshFRCDataButton
             // 
-            this.RefreshFRCDataButton.Location = new System.Drawing.Point(12, 78);
+            this.RefreshFRCDataButton.Location = new System.Drawing.Point(18, 195);
+            this.RefreshFRCDataButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RefreshFRCDataButton.Name = "RefreshFRCDataButton";
-            this.RefreshFRCDataButton.Size = new System.Drawing.Size(165, 23);
+            this.RefreshFRCDataButton.Size = new System.Drawing.Size(248, 35);
             this.RefreshFRCDataButton.TabIndex = 0;
             this.RefreshFRCDataButton.Text = "Refresh FRC Data";
             this.RefreshFRCDataButton.UseVisualStyleBackColor = true;
@@ -50,17 +53,19 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(69, 15);
+            this.label1.Location = new System.Drawing.Point(104, 23);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 13);
+            this.label1.Size = new System.Drawing.Size(43, 20);
             this.label1.TabIndex = 4;
             this.label1.Text = "Year";
             // 
             // yearBox
             // 
-            this.yearBox.Location = new System.Drawing.Point(12, 12);
+            this.yearBox.Location = new System.Drawing.Point(18, 18);
+            this.yearBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.yearBox.Name = "yearBox";
-            this.yearBox.Size = new System.Drawing.Size(51, 20);
+            this.yearBox.Size = new System.Drawing.Size(74, 26);
             this.yearBox.TabIndex = 3;
             this.yearBox.Text = "2015";
             this.yearBox.TextChanged += new System.EventHandler(this.yearBox_TextChanged);
@@ -70,25 +75,28 @@
             this.overrideHelperLabel.AutoSize = true;
             this.overrideHelperLabel.Enabled = false;
             this.overrideHelperLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.overrideHelperLabel.Location = new System.Drawing.Point(69, 41);
+            this.overrideHelperLabel.Location = new System.Drawing.Point(104, 63);
+            this.overrideHelperLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.overrideHelperLabel.Name = "overrideHelperLabel";
-            this.overrideHelperLabel.Size = new System.Drawing.Size(166, 13);
+            this.overrideHelperLabel.Size = new System.Drawing.Size(261, 20);
             this.overrideHelperLabel.TabIndex = 6;
             this.overrideHelperLabel.Text = "Match Video Length (HH:MM:SS)";
             // 
             // matchLengthBox
             // 
-            this.matchLengthBox.Location = new System.Drawing.Point(12, 38);
+            this.matchLengthBox.Location = new System.Drawing.Point(18, 58);
+            this.matchLengthBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.matchLengthBox.Name = "matchLengthBox";
-            this.matchLengthBox.Size = new System.Drawing.Size(51, 20);
+            this.matchLengthBox.Size = new System.Drawing.Size(74, 26);
             this.matchLengthBox.TabIndex = 5;
             this.matchLengthBox.Text = "00:03:00";
             // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(478, 461);
+            this.saveButton.Location = new System.Drawing.Point(717, 709);
+            this.saveButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(92, 23);
+            this.saveButton.Size = new System.Drawing.Size(138, 35);
             this.saveButton.TabIndex = 7;
             this.saveButton.Text = "Save and Exit";
             this.saveButton.UseVisualStyleBackColor = true;
@@ -97,26 +105,50 @@
             // useScoreDisplayedTimeCheckbox
             // 
             this.useScoreDisplayedTimeCheckbox.AutoSize = true;
-            this.useScoreDisplayedTimeCheckbox.Location = new System.Drawing.Point(252, 40);
+            this.useScoreDisplayedTimeCheckbox.Location = new System.Drawing.Point(378, 62);
+            this.useScoreDisplayedTimeCheckbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.useScoreDisplayedTimeCheckbox.Name = "useScoreDisplayedTimeCheckbox";
-            this.useScoreDisplayedTimeCheckbox.Size = new System.Drawing.Size(166, 17);
+            this.useScoreDisplayedTimeCheckbox.Size = new System.Drawing.Size(246, 24);
             this.useScoreDisplayedTimeCheckbox.TabIndex = 8;
             this.useScoreDisplayedTimeCheckbox.Text = "Use Post Result Time Instead";
             this.useScoreDisplayedTimeCheckbox.UseVisualStyleBackColor = true;
             this.useScoreDisplayedTimeCheckbox.CheckedChanged += new System.EventHandler(this.useScoreDisplayedTimeCheckbox_CheckedChanged);
             // 
+            // endOfVideoPaddingBox
+            // 
+            this.endOfVideoPaddingBox.Location = new System.Drawing.Point(18, 102);
+            this.endOfVideoPaddingBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.endOfVideoPaddingBox.Name = "endOfVideoPaddingBox";
+            this.endOfVideoPaddingBox.Size = new System.Drawing.Size(74, 26);
+            this.endOfVideoPaddingBox.TabIndex = 5;
+            this.endOfVideoPaddingBox.Text = "00:00:15";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(104, 107);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(276, 20);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "End Of Video Padding (HH:MM:SS)";
+            // 
             // SettingsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(582, 496);
+            this.ClientSize = new System.Drawing.Size(873, 763);
             this.Controls.Add(this.useScoreDisplayedTimeCheckbox);
             this.Controls.Add(this.saveButton);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.endOfVideoPaddingBox);
             this.Controls.Add(this.overrideHelperLabel);
             this.Controls.Add(this.matchLengthBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.yearBox);
             this.Controls.Add(this.RefreshFRCDataButton);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "SettingsForm";
             this.Text = "Settings";
             this.Load += new System.EventHandler(this.SettingsForm_Load);
@@ -134,5 +166,7 @@
         private System.Windows.Forms.TextBox matchLengthBox;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.CheckBox useScoreDisplayedTimeCheckbox;
+        private System.Windows.Forms.TextBox endOfVideoPaddingBox;
+        private System.Windows.Forms.Label label2;
     }
 }

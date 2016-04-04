@@ -12,6 +12,9 @@ namespace FRCVideoSplitter2
     class FRCApi
     {
         private string baseUrl = "https://frc-api.firstinspires.org/v2.0";
+
+        private string apiToken = "INSERT API TOKEN HERE";
+        
         public static string QualificationMatchesString = "qualification";
         public static string PlayoffMatchesString = "playoff";
         private Dictionary<string, DateTime> requestTimesDict = new Dictionary<string, DateTime>();
@@ -854,7 +857,7 @@ namespace FRCVideoSplitter2
             ///REMOVE AFTER FRC FIXES IT?
             //request.ServerCertificateValidationCallback += (o, c, ch, er) => true;
 
-            string token = "TYTREMBLAY:C272D991-944E-49D7-B10E-27BA5EBB598B";
+            string token = apiToken;
 
             string encodedToken = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(token));
 

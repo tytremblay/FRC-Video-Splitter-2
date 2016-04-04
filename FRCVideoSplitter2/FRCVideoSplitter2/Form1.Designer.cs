@@ -384,7 +384,6 @@
             // 
             // getAllTheDataButton
             // 
-            this.getAllTheDataButton.Enabled = false;
             this.getAllTheDataButton.Location = new System.Drawing.Point(21, 781);
             this.getAllTheDataButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.getAllTheDataButton.Name = "getAllTheDataButton";

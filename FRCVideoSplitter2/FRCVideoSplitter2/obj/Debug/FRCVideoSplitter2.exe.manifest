@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="FRCVideoSplitter2.exe" size="106496">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="FRCVideoSplitter2.exe" size="107520">
       <assemblyIdentity name="FRCVideoSplitter2" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>vLYK0mFb+JORxjs8+xVrVeqBeGq/eB9QvbkwRsBpUgw=</dsig:DigestValue>
+        <dsig:DigestValue>Urb6jjMj55uXRHGl76XGy0yl9F32rqSGCKknEcD7DQc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -230,13 +230,13 @@
       <dsig:DigestValue>tveHiMyywaGjBGOX32Ffkmp7zwlvKFGKZqt1whtTfhw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="FRCVideoSplitter2.exe.config" size="2824">
+  <file name="FRCVideoSplitter2.exe.config" size="2938">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>RK63i1g/VcvgMb5iMDfgVvug4ojmodAv9H4Km20sGng=</dsig:DigestValue>
+      <dsig:DigestValue>i8d8MM7/mVNn5X/tJW8jfAGNHaPRKK4LbpofvCQ5xXY=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

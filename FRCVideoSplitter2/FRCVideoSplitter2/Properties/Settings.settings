@@ -35,5 +35,8 @@
     <Setting Name="currentFileName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="endOfVideoPadTime" Type="System.String" Scope="User">
+      <Value Profile="(Default)">00:00:15</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

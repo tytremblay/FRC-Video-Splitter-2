@@ -495,7 +495,8 @@ namespace FRCVideoSplitter2
                 string args = "";
                 if (Properties.Settings.Default.useScoreDisplayedTime && match.PostResultTime.HasValue)
                 {
-                    TimeSpan matchLength = (((DateTime)match.PostResultTime - match.ActualStartTime).Add(TimeSpan.FromSeconds(30)));
+                    TimeSpan padTime = TimeSpan.Parse(Properties.Settings.Default.endOfVideoPadTime);
+                    TimeSpan matchLength = (((DateTime)match.PostResultTime - match.ActualStartTime).Add(padTime));
                     string matchLengthString = matchLength.ToString();//"hh:mm:ss");
                     args = "-ss " + startTime + " -i \"" + sourceFile + "\" -t " + matchLengthString + " -c:v copy -c:a copy \"" + destinationFile + "\"";
                 }

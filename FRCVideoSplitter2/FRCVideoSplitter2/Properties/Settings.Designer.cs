@@ -154,5 +154,17 @@ namespace FRCVideoSplitter2.Properties {
                 this["currentFileName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:00:15")]
+        public string endOfVideoPadTime {
+            get {
+                return ((string)(this["endOfVideoPadTime"]));
+            }
+            set {
+                this["endOfVideoPadTime"] = value;
+            }
+        }
     }
 }

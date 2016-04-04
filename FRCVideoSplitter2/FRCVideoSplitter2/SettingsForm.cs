@@ -55,12 +55,14 @@ namespace FRCVideoSplitter2
         {
             this.yearBox.Text = Properties.Settings.Default.year.ToString();
             this.matchLengthBox.Text = Properties.Settings.Default.matchLength;
+            this.endOfVideoPaddingBox.Text = Properties.Settings.Default.endOfVideoPadTime;
             this.useScoreDisplayedTimeCheckbox.Checked = Properties.Settings.Default.useScoreDisplayedTime;
         }
 
         private void saveButton_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.matchLength = matchLengthBox.Text;
+            Properties.Settings.Default.endOfVideoPadTime = endOfVideoPaddingBox.Text;
             Properties.Settings.Default.Save();
             Properties.Settings.Default.useScoreDisplayedTime = this.useScoreDisplayedTimeCheckbox.Checked;
             this.Close();
