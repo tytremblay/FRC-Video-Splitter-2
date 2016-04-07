@@ -13,8 +13,10 @@ namespace FRCVideoSplitter2
     {
         private string baseUrl = "https://frc-api.firstinspires.org/v2.0";
 
-        private string apiToken = "INSERT API TOKEN HERE";
-        
+        //private string apiToken = "INSERT API TOKEN HERE";
+        private string apiToken = "TYTREMBLAY:C272D991-944E-49D7-B10E-27BA5EBB598B";
+
+
         public static string QualificationMatchesString = "qualification";
         public static string PlayoffMatchesString = "playoff";
         private Dictionary<string, DateTime> requestTimesDict = new Dictionary<string, DateTime>();
@@ -122,6 +124,20 @@ namespace FRCVideoSplitter2
             }
 
             return teams;
+        }
+
+        public List<TeamRanking2016> get2016EventRankings(int season, string eventKey, bool useIfModifiedSince = true)
+        {
+            string uri = baseUrl + "/" + season.ToString() + "/rankings/" + eventKey;
+            EventRankings2016 results = handleAPIRequest<EventRankings2016>(uri, useIfModifiedSince);
+            if (results != null)
+            {
+                return results.Rankings;
+            }
+            else
+            {
+                return default(List<TeamRanking2016>);
+            }
         }
 
         /// <summary>
@@ -783,6 +799,7 @@ namespace FRCVideoSplitter2
         }
 
 
+        [Serializable]
         /// <summary>
         /// FRC model for a team ranking for 2016
         /// </summary>
@@ -791,21 +808,23 @@ namespace FRCVideoSplitter2
             public int? dq { get; set; }
             public int? losses { get; set; }
             public int? matchesPlayed { get; set; }
-            public int? qualAverage { get; set; }
+            public double? qualAverage { get; set; }
             public int? rank { get; set; }
             public int? teamNumber { get; set; }
             public int? ties { get; set; }
             public int? wins { get; set; }
-            public int? sortOrder1 { get; set; }
-            public int? sortOrder2 { get; set; }
-            public int? sortOrder3 { get; set; }
-            public int? sortOrder4 { get; set; }
-            public int? sortOrder5 { get; set; }
-            public int? sortOrder6 { get; set; }
+            public double? sortOrder1 { get; set; }
+            public double? sortOrder2 { get; set; }
+            public double? sortOrder3 { get; set; }
+            public double? sortOrder4 { get; set; }
+            public double? sortOrder5 { get; set; }
+            public double? sortOrder6 { get; set; }
 
             public TeamRanking2016() { }
         }
 
+
+        [Serializable]
         /// <summary>
         /// FRC model for rankings at an event in 2016
         /// </summary>
@@ -906,6 +925,10 @@ namespace FRCVideoSplitter2
                 {
                     //no changes have been made
                     throw new WebException("API Not Modified", ex);
+                }
+                if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new WebException("Invalid API Token", ex);
                 }
             }
 

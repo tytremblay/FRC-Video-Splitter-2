@@ -741,7 +741,7 @@ namespace FRCVideoSplitter2
                 }
                 else if (matchesList[videoUploadIndex].VideoPath != "")
                 {
-                    String videoTitle = "[" + matchesList[videoUploadIndex].Description + "] " + Properties.Settings.Default.year.ToString() + " " + evt.name;
+                    String videoTitle = matchesList[videoUploadIndex].Description + " - " + Properties.Settings.Default.year.ToString() + " " + evt.name;
 
                     //If there's already a video in the playlist by this name, grab the id and don't upload this video
                     //If the user wants to upload this video instead, they'll have to remove the other video from the playlist
@@ -1022,6 +1022,7 @@ namespace FRCVideoSplitter2
             Dictionary<string, double> captureCounts = new Dictionary<string, double>();
             Dictionary<string, double> matchCounts = new Dictionary<string, double>();
             Dictionary<string, double> capturePercentages = new Dictionary<string, double>();
+            Dictionary<string, double> rankingPointsPerMatch = new Dictionary<string, double>();
 
             String filePath = Path.Combine(Properties.Settings.Default.matchVideoDestination, fileName);
 
@@ -1039,9 +1040,25 @@ namespace FRCVideoSplitter2
                 List<FRCApi.ScoreDetails2016> scores = api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, evt.code.ToLower(), "qual");
                 List<FRCApi.MatchResult> results = api.getMatchResults<FRCApi.MatchResult>(Properties.Settings.Default.year, evt.code.ToLower());
 
+<<<<<<< HEAD
+                    List<FRCApi.ScoreDetails2016> scores = api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, evt.code.ToLower(), "qual");
+                    List<FRCApi.MatchResult> results = api.getMatchResults<FRCApi.MatchResult>(Properties.Settings.Default.year, evt.code.ToLower());
+                    List<FRCApi.TeamRanking2016> rankings = api.get2016EventRankings(Properties.Settings.Default.year, evt.code.ToLower(), false);
+                    if (rankings != null)
+                    {
+                        foreach (FRCApi.TeamRanking2016 tr in rankings)
+                        {
+                            if (tr.matchesPlayed >= 8)
+                            {
+                                rankingPointsPerMatch.Add(tr.teamNumber.ToString() + "@" + evt.code.ToLower(), (double)tr.sortOrder1 / (double)tr.matchesPlayed);
+                            }
+                        }
+                    }
+=======
                 if (scores != null  && scores.Count > 0)
                 {
                     scores.AddRange(api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, evt.code.ToLower(), "playoff"));
+>>>>>>> parent of f51fb36... api fixes
 
                     if (firstLoop)
                     {
@@ -1122,6 +1139,14 @@ namespace FRCVideoSplitter2
                         }
                     }
 
+<<<<<<< HEAD
+                
+
+                foreach (KeyValuePair<string, double> entry in captureCounts)
+                {
+                    capturePercentages.Add(entry.Key, captureCounts[entry.Key] / matchCounts[entry.Key]);
+=======
+>>>>>>> parent of f51fb36... api fixes
                 }
             }
 
@@ -1130,15 +1155,38 @@ namespace FRCVideoSplitter2
                 capturePercentages.Add(entry.Key, captureCounts[entry.Key] / matchCounts[entry.Key]);
             }
 
+<<<<<<< HEAD
+                var rankItems = from pair in rankingPointsPerMatch
+                                orderby pair.Value descending
+                                select pair;
+
+                StringBuilder sb2 = new StringBuilder();
+=======
             // Reverse sort.
             // ... Can be looped over in the same way as above.
             var items = from pair in capturePercentages
                         orderby pair.Value descending
                         select pair;
+>>>>>>> parent of f51fb36... api fixes
 
             StringBuilder sb2 = new StringBuilder();
 
+<<<<<<< HEAD
+                StringBuilder sb3 = new StringBuilder();
+
+                foreach (KeyValuePair<string, double> entry in rankItems)
+                {
+                    sb3.AppendFormat("{0},{1}{2}", entry.Key, entry.Value, Environment.NewLine);
+                }
+
+                File.WriteAllText(Path.Combine(Properties.Settings.Default.matchVideoDestination, "rankingPointsPerMatch.csv"), sb3.ToString());
+
+                File.WriteAllText(filePath, sb.ToString());
+            }
+            catch (Exception ex)
+=======
             foreach (KeyValuePair<string, double> entry in items)
+>>>>>>> parent of f51fb36... api fixes
             {
                 sb2.AppendFormat("{0},{1},{2},{3}{4}", entry.Key, captureCounts[entry.Key], matchCounts[entry.Key], entry.Value, Environment.NewLine);
             }
