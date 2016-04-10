@@ -57,13 +57,13 @@ namespace FRCVideoSplitter2
             Properties.Settings.Default.Save();
 
             updateObjects();
-            
+
             uploader.Upload_ProgressChanged += new EventHandler<long>(vid_ProgressChanged);
             uploader.UploadCompleted += new EventHandler<string>(vid_UploadCompleted);
             uploader.Upload_Failed += new EventHandler<string>(vid_UploadFailed);
 
             api.loadRequestTimes();
-            
+
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -89,9 +89,9 @@ namespace FRCVideoSplitter2
         /// Pulls from settings and updates the objects in this class
         /// </summary>
         private void updateObjects()
-        {            
+        {
             string eventsJsonStr = Properties.Settings.Default.eventsJsonString;
-            this.eventsList = JsonConvert.DeserializeObject<FRCApi.EventsList>(eventsJsonStr).Events.OrderBy(o=>o.name).ToList();            
+            this.eventsList = JsonConvert.DeserializeObject<FRCApi.EventsList>(eventsJsonStr).Events.OrderBy(o => o.name).ToList();
             this.yearBox.Text = Properties.Settings.Default.year.ToString();
             List<string> eventNames = this.eventsList.Select(x => x.name).ToList();
             this.eventsComboBox.DataSource = eventNames;
@@ -102,14 +102,14 @@ namespace FRCVideoSplitter2
             Properties.Settings.Default.useManualTimeStamps = checkBox1.Checked;
             Properties.Settings.Default.Save();
         }
-        
+
         /// <summary>
         /// Save the year if they change it
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void yearBox_TextChanged(object sender, EventArgs e)
-        {   
+        {
             //if they've entered 4 digits
             int year;
             if (this.yearBox.Text.Length == 4 && int.TryParse(this.yearBox.Text, out year))
@@ -145,13 +145,13 @@ namespace FRCVideoSplitter2
             int year = Properties.Settings.Default.year;
 
             List<FRCApi.MatchResult> rawMatches = new List<FRCApi.MatchResult>();
-         
+
             rawMatches = api.getMatchResults<FRCApi.MatchResult>(Properties.Settings.Default.year, Properties.Settings.Default.eventCode);
 
             foreach (FRCApi.MatchResult frcMatch in rawMatches)
             {
                 matchesList.Add(new SplitterTypes.Match(frcMatch));
-                
+
                 /*
                 if (frcMatch.tournamentLevel != "Qualification")
                 {
@@ -182,12 +182,12 @@ namespace FRCVideoSplitter2
                     col.ReadOnly = true;
                     col.DefaultCellStyle.BackColor = Color.LightGray;
                 }
-                
+
             }
 
             foreach (DataGridViewRow row in matchesDataGridView.Rows)
             {
-                row.Cells["TimeStamp"].ReadOnly = !(Properties.Settings.Default.useManualTimeStamps && (bool) row.Cells["Include"].Value);
+                row.Cells["TimeStamp"].ReadOnly = !(Properties.Settings.Default.useManualTimeStamps && (bool)row.Cells["Include"].Value);
 
                 if (row.Cells["TimeStamp"].ReadOnly)
                 {
@@ -212,7 +212,7 @@ namespace FRCVideoSplitter2
             if (e.Button == MouseButtons.Right)
             {
                 ContextMenu m = new ContextMenu();
-                
+
                 MenuItem excludeMenuItem = new MenuItem("Exclude");
                 excludeMenuItem.Click += new EventHandler(item_Click);
 
@@ -275,7 +275,7 @@ namespace FRCVideoSplitter2
                 MessageBox.Show("Please get match data first.");
                 return;
             }
-            
+
         }
 
         /// <summary>
@@ -299,7 +299,7 @@ namespace FRCVideoSplitter2
                 else
                 {
                     matchesDataGridView.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.Black;
-                }                
+                }
             }
 
             enableFirstIncludedTimeStamp();
@@ -367,7 +367,7 @@ namespace FRCVideoSplitter2
 
                     matchesList[i].TimeStamp = previousMatchStamp + (currentMatchTime - previousMatchTime);
                 }
-            }            
+            }
         }
 
         /// <summary>
@@ -378,7 +378,7 @@ namespace FRCVideoSplitter2
         {
             foreach (DataGridViewRow row in matchesDataGridView.Rows)
             {
-                if ((bool) row.Cells["Include"].Value == true)
+                if ((bool)row.Cells["Include"].Value == true)
                 {
                     return row;
                 }
@@ -403,7 +403,7 @@ namespace FRCVideoSplitter2
         {
             if (!Properties.Settings.Default.useManualTimeStamps)
             {
-                foreach (DataGridViewRow row in matchesDataGridView.Rows) 
+                foreach (DataGridViewRow row in matchesDataGridView.Rows)
                 {
                     row.Cells["TimeStamp"].ReadOnly = true;
                     row.Cells["TimeStamp"].Style.BackColor = Color.LightGray;
@@ -453,11 +453,11 @@ namespace FRCVideoSplitter2
             DirectoryInfo di = new DirectoryInfo(Properties.Settings.Default.matchVideoDestination);
             FileInfo[] fiArr = di.GetFiles();
 
-            string[] stringSeparators = new string[] {" - "};
+            string[] stringSeparators = new string[] { " - " };
 
             foreach (FileInfo f in fiArr)
             {
-                string[] splitArr = f.Name.Split(stringSeparators,StringSplitOptions.None);
+                string[] splitArr = f.Name.Split(stringSeparators, StringSplitOptions.None);
                 if (splitArr.Count() > 1)
                 {
                     if (splitArr[1].StartsWith(Properties.Settings.Default.eventName))
@@ -484,7 +484,7 @@ namespace FRCVideoSplitter2
             int completed = 0;
 
             List<SplitterTypes.Match> includedMatches = matchesList.Where(i => i.Include == true).ToList();
-            
+
             foreach (SplitterTypes.Match match in includedMatches)
             {
                 progress.SetText("Splitting video " + (completed + 1) + " of " + matchesList.Where(i => i.Include == true).ToList().Count);
@@ -564,7 +564,7 @@ namespace FRCVideoSplitter2
         {
             if (anError.Exception.GetType() == typeof(System.FormatException))
             {
-                MessageBox.Show("Invalid TimeStamp Format. Check your entry and try again, or press Esc to cancel.\n\nDetails:\n" + anError.Exception.Message, "Invalid TimeStamp Format",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Invalid TimeStamp Format. Check your entry and try again, or press Esc to cancel.\n\nDetails:\n" + anError.Exception.Message, "Invalid TimeStamp Format", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -622,7 +622,7 @@ namespace FRCVideoSplitter2
                 progress.Canceled += new EventHandler<EventArgs>(cancelAsyncButton_Click);
                 progress.Show();
                 backgroundWorker1.RunWorkerAsync();
-            }        
+            }
         }
 
         /// <summary>
@@ -673,7 +673,7 @@ namespace FRCVideoSplitter2
             if (backgroundWorker1.WorkerSupportsCancellation == true)
             {
                 Console.WriteLine("Worker supports cancellation.");
-                backgroundWorker1.CancelAsync();                
+                backgroundWorker1.CancelAsync();
             }
         }
 
@@ -724,7 +724,7 @@ namespace FRCVideoSplitter2
                     currentPlaylistId = playlists[index].Id;
                 }
             }
-            else 
+            else
             {
                 //If they don't want to use the playlist we found, create a new one.
                 currentPlaylistId = uploader.CreatePlaylist(playlistName, playlistDesc, true);
@@ -753,7 +753,7 @@ namespace FRCVideoSplitter2
                     }
 
                     progress.SetText("Uploading:\n" + videoTitle);
-                    
+
                     sb = new StringBuilder();
                     sb.AppendLine(videoTitle);
                     sb.AppendLine("Red (" + matchesList[videoUploadIndex].RedAlliance + ") - " + matchesList[videoUploadIndex].RedScore.ToString());
@@ -765,7 +765,7 @@ namespace FRCVideoSplitter2
                     int vidChunks = Convert.ToInt32(new FileInfo(matchesList[videoUploadIndex].VideoPath).Length);
                     progress.Chunks = vidChunks;
                     Console.WriteLine("vidChunks: " + vidChunks);
-                    
+
                     progress.SetCompletedChunks(0);
 
                     try
@@ -809,7 +809,7 @@ namespace FRCVideoSplitter2
             Console.WriteLine("Worker Completed");
             progress.Close();
 
-            foreach(SplitterTypes.Match m in matchesList)
+            foreach (SplitterTypes.Match m in matchesList)
             {
                 string importFilePath = Path.Combine(matchVideoDestinationPathTextBox.Text, eventsComboBox.Text + ".csv");
 
@@ -836,7 +836,7 @@ namespace FRCVideoSplitter2
                 }
             }
 
-            MessageBox.Show("Videos uploaded Successfully.  Created a private playlist on the channel.");            
+            MessageBox.Show("Videos uploaded Successfully.  Created a private playlist on the channel.");
         }
 
         /// <summary>
@@ -856,7 +856,7 @@ namespace FRCVideoSplitter2
             foreach (SplitterTypes.Match match in matchesList)
             {
                 if (match.YouTubeId != "")
-                {                    
+                {
                     sb.AppendFormat("{0},", Properties.Settings.Default.year.ToString());
                     sb.AppendFormat("{0},", evt.code.ToLower());
                     if (match.Description.StartsWith("QF"))
@@ -899,14 +899,14 @@ namespace FRCVideoSplitter2
             if (year == 2016)
             {
                 filePath = save2016ScoreDetails(includedMatches);
-                
+
             }
             else
             {
                 filePath = save2015ScoreDetails(includedMatches);
             }
 
-           
+
             MessageBox.Show("Score details .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
         }
 
@@ -1039,26 +1039,22 @@ namespace FRCVideoSplitter2
                 Console.WriteLine("Getting score detials for: " + evt.code);
                 List<FRCApi.ScoreDetails2016> scores = api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, evt.code.ToLower(), "qual");
                 List<FRCApi.MatchResult> results = api.getMatchResults<FRCApi.MatchResult>(Properties.Settings.Default.year, evt.code.ToLower());
-
-<<<<<<< HEAD
-                    List<FRCApi.ScoreDetails2016> scores = api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, evt.code.ToLower(), "qual");
-                    List<FRCApi.MatchResult> results = api.getMatchResults<FRCApi.MatchResult>(Properties.Settings.Default.year, evt.code.ToLower());
-                    List<FRCApi.TeamRanking2016> rankings = api.get2016EventRankings(Properties.Settings.Default.year, evt.code.ToLower(), false);
-                    if (rankings != null)
+                List<FRCApi.TeamRanking2016> rankings = api.get2016EventRankings(Properties.Settings.Default.year, evt.code.ToLower(), false);
+                if (rankings != null)
+                {
+                    foreach (FRCApi.TeamRanking2016 tr in rankings)
                     {
-                        foreach (FRCApi.TeamRanking2016 tr in rankings)
+                        if (tr.matchesPlayed >= 8)
                         {
-                            if (tr.matchesPlayed >= 8)
-                            {
-                                rankingPointsPerMatch.Add(tr.teamNumber.ToString() + "@" + evt.code.ToLower(), (double)tr.sortOrder1 / (double)tr.matchesPlayed);
-                            }
+                            rankingPointsPerMatch.Add(tr.teamNumber.ToString() + "@" + evt.code.ToLower(), (double)tr.sortOrder1 / (double)tr.matchesPlayed);
                         }
                     }
-=======
-                if (scores != null  && scores.Count > 0)
+                }
+
+                if (scores != null && scores.Count > 0)
                 {
                     scores.AddRange(api.getScoreDetails<FRCApi.ScoreDetails2016>(Properties.Settings.Default.year, evt.code.ToLower(), "playoff"));
->>>>>>> parent of f51fb36... api fixes
+
 
                     if (firstLoop)
                     {
@@ -1133,60 +1129,53 @@ namespace FRCVideoSplitter2
                                         matchCounts.Add(key, 1);
                                     }
                                 }
-                                
+
                             }
 
                         }
                     }
 
-<<<<<<< HEAD
-                
 
-                foreach (KeyValuePair<string, double> entry in captureCounts)
-                {
-                    capturePercentages.Add(entry.Key, captureCounts[entry.Key] / matchCounts[entry.Key]);
-=======
->>>>>>> parent of f51fb36... api fixes
+
+
+                    
                 }
             }
 
             foreach (KeyValuePair<string, double> entry in captureCounts)
             {
                 capturePercentages.Add(entry.Key, captureCounts[entry.Key] / matchCounts[entry.Key]);
+
+
             }
 
-<<<<<<< HEAD
-                var rankItems = from pair in rankingPointsPerMatch
-                                orderby pair.Value descending
-                                select pair;
+            var rankItems = from pair in rankingPointsPerMatch
+                            orderby pair.Value descending
+                            select pair;
 
-                StringBuilder sb2 = new StringBuilder();
-=======
             // Reverse sort.
             // ... Can be looped over in the same way as above.
             var items = from pair in capturePercentages
                         orderby pair.Value descending
                         select pair;
->>>>>>> parent of f51fb36... api fixes
+
 
             StringBuilder sb2 = new StringBuilder();
 
-<<<<<<< HEAD
-                StringBuilder sb3 = new StringBuilder();
 
-                foreach (KeyValuePair<string, double> entry in rankItems)
-                {
-                    sb3.AppendFormat("{0},{1}{2}", entry.Key, entry.Value, Environment.NewLine);
-                }
+            StringBuilder sb3 = new StringBuilder();
 
-                File.WriteAllText(Path.Combine(Properties.Settings.Default.matchVideoDestination, "rankingPointsPerMatch.csv"), sb3.ToString());
-
-                File.WriteAllText(filePath, sb.ToString());
+            foreach (KeyValuePair<string, double> entry in rankItems)
+            {
+                sb3.AppendFormat("{0},{1}{2}", entry.Key, entry.Value, Environment.NewLine);
             }
-            catch (Exception ex)
-=======
+
+            File.WriteAllText(Path.Combine(Properties.Settings.Default.matchVideoDestination, "rankingPointsPerMatch.csv"), sb3.ToString());
+
+            File.WriteAllText(filePath, sb.ToString());
+
+
             foreach (KeyValuePair<string, double> entry in items)
->>>>>>> parent of f51fb36... api fixes
             {
                 sb2.AppendFormat("{0},{1},{2},{3}{4}", entry.Key, captureCounts[entry.Key], matchCounts[entry.Key], entry.Value, Environment.NewLine);
             }
@@ -1195,6 +1184,8 @@ namespace FRCVideoSplitter2
             File.WriteAllText(filePath, sb.ToString());
 
             return filePath;
+
+
         }
 
         private string getAll2015Data()
@@ -1344,7 +1335,7 @@ namespace FRCVideoSplitter2
 
         private void importVideosButton_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Multiselect = true; 
+            openFileDialog1.Multiselect = true;
             DialogResult result = openFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {

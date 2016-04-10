@@ -22,14 +22,11 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-<<<<<<< HEAD
     <InstallUrl>https://github.com/tytremblay/FRC-Video-Splitter-2/releases/download/1.0/</InstallUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <ApplicationRevision>13</ApplicationRevision>
-=======
     <ApplicationRevision>8</ApplicationRevision>
->>>>>>> parent of f51fb36... api fixes
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
