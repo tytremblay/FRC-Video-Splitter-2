@@ -153,3 +153,4 @@ C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSpli
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.application
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.exe
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.pdb
+C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csprojResolveAssemblyReference.cache
