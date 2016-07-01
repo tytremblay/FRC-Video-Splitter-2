@@ -489,7 +489,7 @@ namespace FRCVideoSplitter2
             {
                 progress.SetText("Splitting video " + (completed + 1) + " of " + matchesList.Where(i => i.Include == true).ToList().Count);
                 string startTime = match.TimeStamp.ToString("HH:mm:ss.fff");
-                string videoName = match.Description.ToString() + " - " + eventsComboBox.Text + Path.GetExtension(sourceFile);
+                string videoName = match.Description.ToString() + " - " + yearBox.Text + " " + eventsComboBox.Text + Path.GetExtension(sourceFile);
                 string destinationFile = Path.Combine(matchVideoDestinationPathTextBox.Text, videoName);
                 string command = "ffmpeg.exe";
                 string args = "";
