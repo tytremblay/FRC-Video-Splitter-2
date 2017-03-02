@@ -14,8 +14,6 @@ namespace FRCVideoSplitter2
         private string baseUrl = "https://frc-api.firstinspires.org/v2.0";
 
         //private string apiToken = "INSERT API TOKEN HERE";
-        private string apiToken = "TYTREMBLAY:C272D991-944E-49D7-B10E-27BA5EBB598B";
-
 
         public static string QualificationMatchesString = "qualification";
         public static string PlayoffMatchesString = "playoff";
