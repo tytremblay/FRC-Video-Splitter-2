@@ -7,14 +7,14 @@
     <framework targetVersion="4.5" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="FRCVideoSplitter2.exe.manifest" size="14158">
+    <dependentAssembly dependencyType="install" codebase="FRCVideoSplitter2.exe.manifest" size="15455">
       <assemblyIdentity name="FRCVideoSplitter2.exe" version="1.0.0.10" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>Q2PmOO4s9yaB0A/GbXMcA1Si2elww6Uq4TjyyVjB2FY=</dsig:DigestValue>
+        <dsig:DigestValue>zf7mfL8r/BnxOp80Y+S68VWRyUbe4iTwHTFZA/QMH/E=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

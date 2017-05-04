@@ -154,3 +154,9 @@ C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSpli
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.exe
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.pdb
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csprojResolveAssemblyReference.cache
+C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\Interop.WMPLib.dll
+C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\AxInterop.WMPLib.dll
+C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csproj.ResolveComReference.cache
+C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\Interop.WMPLib.dll
+C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\AxInterop.WMPLib.dll
+C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.Form2.resources
