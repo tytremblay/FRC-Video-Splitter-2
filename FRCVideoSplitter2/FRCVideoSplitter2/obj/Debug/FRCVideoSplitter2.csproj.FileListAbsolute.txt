@@ -217,3 +217,4 @@ C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitte
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.application
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.exe
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.pdb
+C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csprojResolveAssemblyReference.cache

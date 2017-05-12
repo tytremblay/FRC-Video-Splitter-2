@@ -506,6 +506,7 @@ namespace FRCVideoSplitter2
                 return;
             }
 
+            string titleCardRendered = null;
             string sourceFile = sourceVideoPathTextBox.Text;
             progress = new ProgressDialog();
             progress.SetText("Splitting videos");
@@ -600,7 +601,14 @@ namespace FRCVideoSplitter2
                 controlScript += " -i \"" + WatermarkSourceFile + "\" -filter_complex \'overlay\' ";
             }
 
-            controlScript += " -t " + MatchLength + " -c:v copy -c:a copy \"" + DestinationFile + "\"";
+            controlScript += " -t " + MatchLength;
+
+            if (WatermarkSourceFile == null) //can't use this copy option if we're going watermark
+            {
+                controlScript += " -c:v copy -c:a copy ";//this will skip re-encoding (faster), but can't use with 
+            }
+
+            controlScript += " \"" + DestinationFile + "\"";
 
             return controlScript;
         }
