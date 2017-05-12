@@ -500,13 +500,13 @@ namespace FRCVideoSplitter2
         /// </summary>
         private void splitVideosButton_Click(object sender, EventArgs e)
         {
+            bool firstRunVideo = true;//on first run we re-render the title card that might exist
             if (!HasEventSelected() || !File.Exists(sourceVideoPathTextBox.Text))//put pre-reqs here
             {
                 MessageBox.Show("Please complete missing steps above before splitting.", "Unavailable");
                 return;
             }
 
-            string titleCardRendered = null;
             string sourceFile = sourceVideoPathTextBox.Text;
             progress = new ProgressDialog();
             progress.SetText("Splitting videos");
@@ -514,6 +514,21 @@ namespace FRCVideoSplitter2
             progress.Chunks = chunks;
             progress.Show();
             int completed = 0;
+            string renderedTitleCardLocation = null;
+
+            if (File.Exists(Properties.Settings.Default.titleCardLocation))
+            {
+                renderedTitleCardLocation = Path.GetTempPath() + "renderedintroFRCSPLIT.mp4";
+                File.Delete(renderedTitleCardLocation);
+
+                string arg = "-loop 1 -framerate 30 -t 3 -i \"" + Properties.Settings.Default.titleCardLocation + "\"";
+                ////arg += "-vf drawtext=fontsize = 15:fontfile = FreeSerif.ttf:text = \"WATERMARK TEXT\":y = h / 2:x = 50:fontcolor = green:fontsize = 40";
+                //arg += " drawtext=\"fontsize = 30:fontfile = FreeSerif.ttf:text = 'hello world':x = (w - text_w) / 2:y = (h - text_h) / 2\"";
+                arg += " \"" + renderedTitleCardLocation + "\"";
+                /////string arg = "-f lavfi -i color=c=red:s=320x240:d=0.5 -vf \"drawtext=fontsize=30: box = 1:boxborderw = 5:boxcolor = white@0.25: fontcolor = white:x = (w - text_w) / 2:y = (h - text_h) / 2:text = 'Stack Overflow'\" \"" + renderedTitleCardLocation + "\"";
+                //////string arg = "-loop 1 -framerate 30 -t 3 -i \"" + Properties.Settings.Default.titleCardLocation + "\" drawtext=fontfile=FreeSerif.ttf:text=helloworld \"" + renderedTitleCardLocation + "\"";
+                RunFfmpegCommand(arg);
+            }
 
             List<SplitterTypes.Match> includedMatches = matchesList.Where(i => i.Include == true).ToList();
 
@@ -523,7 +538,6 @@ namespace FRCVideoSplitter2
                 string startTime = match.TimeStamp.ToString("HH:mm:ss.fff");
                 string videoName = match.Description.ToString() + " - " + yearBox.Text + " " + eventsComboBox.Text + Path.GetExtension(sourceFile);
                 string destinationFile = Path.Combine(matchVideoDestinationPathTextBox.Text, videoName);
-                string command = "ffmpeg.exe";
                 string matchLengthString = null;
                 string watermarkFileLocation = null;
                 if (Properties.Settings.Default.useScoreDisplayedTime && match.PostResultTime.HasValue)
@@ -537,19 +551,26 @@ namespace FRCVideoSplitter2
                     watermarkFileLocation = Properties.Settings.Default.watermarkLocation;
                 }
 
-                string args = BuildFfmpegControlScript(startTime, sourceFile, destinationFile, matchLengthString, watermarkFileLocation);                
+                string args = BuildFfmpegControlScript(startTime, sourceFile, destinationFile, matchLengthString, watermarkFileLocation);
 
-                Console.WriteLine(args);
-                Process process = new Process();
-                process.StartInfo.FileName = command;
-                process.StartInfo.Arguments = args;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.Start();
-                process.WaitForExit();
-                string output = process.StandardOutput.ReadToEnd();
-                Console.WriteLine(output);
+                RunFfmpegCommand(args); //run original split video
+
+                if (File.Exists(renderedTitleCardLocation))
+                {
+                    //Add title card
+                    if (firstRunVideo || !File.Exists("intermediate1.ts"))
+                    {
+                        string args2 = "-y -i \"" + renderedTitleCardLocation + "\" -c copy -bsf:v h264_mp4toannexb -f mpegts intermediate1.ts";
+                        RunFfmpegCommand(args2);
+                    }
+
+                    string args3 = "-y -i \"" + destinationFile + "\" -c copy -bsf:v h264_mp4toannexb -f mpegts intermediate2.ts";
+                    RunFfmpegCommand(args3);
+
+                    string args4 = "-y -i \"concat:intermediate1.ts|intermediate2.ts\" -c copy -bsf:a aac_adtstoasc \"" + destinationFile + "\"";
+                    RunFfmpegCommand(args4); //override original split with concat split
+                }
+
                 progress.SetCompletedChunks(++completed);
 
                 //save the video path in the match object
@@ -557,33 +578,18 @@ namespace FRCVideoSplitter2
                 splitVideos.Add(new SplitterTypes.SplitVideo(eventCodeBox.Text, match.Description.ToString(), destinationFile));
             }
 
+            if (File.Exists("intermediate1.ts")) //cleanup
+            {
+                File.Delete("intermediate1.ts");
+            }
+            if (File.Exists("intermediate2.ts"))
+            {
+                File.Delete("intermediate2.ts");
+            }
+
             string importFilePath = Path.Combine(matchVideoDestinationPathTextBox.Text, eventsComboBox.Text + ".splt");
 
             HelperDataStructures.WriteObjectToFile<BindingList<SplitterTypes.Match>>(importFilePath, matchesList);
-
-            /*
-            if (!File.Exists(importFilePath))
-            {
-                using (StreamWriter sw = File.CreateText(importFilePath))
-                {
-                    foreach (SplitterTypes.SplitVideo vid in splitVideos)
-                    {
-                        sw.WriteLine(vid.ToString());
-                    }
-                }
-            }
-            else
-            {
-                using (StreamWriter sw = File.AppendText(importFilePath))
-                {
-                    foreach (SplitterTypes.SplitVideo vid in splitVideos)
-                    {
-                        sw.WriteLine(vid.ToString());
-                    }
-                }
-            }
-            */
-
             progress.Close();
         }
 
@@ -594,23 +600,40 @@ namespace FRCVideoSplitter2
                 MatchLength = Properties.Settings.Default.matchLength;
             }
             MatchLength = Properties.Settings.Default.matchLength;
-            string controlScript = "-ss " + StartTime + " -i \"" + SourceFile + "\"";
+            string controlScript = "-y ";
+
+            controlScript += "-ss " + StartTime + " -i \"" + SourceFile + "\"";
 
             if (WatermarkSourceFile != null)
             {
-                controlScript += " -i \"" + WatermarkSourceFile + "\" -filter_complex \'overlay\' ";
+                controlScript += " -i \"" + WatermarkSourceFile + "\" -filter_complex \'overlay\'";
             }
 
             controlScript += " -t " + MatchLength;
 
             if (WatermarkSourceFile == null) //can't use this copy option if we're going watermark
             {
-                controlScript += " -c:v copy -c:a copy ";//this will skip re-encoding (faster), but can't use with 
+                controlScript += " -c:v copy -c:a copy ";//this will skip re-encoding (faster), but can't use with filter
             }
 
             controlScript += " \"" + DestinationFile + "\"";
 
             return controlScript;
+        }
+
+        private void RunFfmpegCommand(string command)
+        {
+            Console.WriteLine(command);
+            Process process = new Process();
+            process.StartInfo.FileName = "ffmpeg.exe";
+            process.StartInfo.Arguments = command;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+            process.Start();
+            process.WaitForExit();
+            string output = process.StandardOutput.ReadToEnd();
+            Console.WriteLine(output);
         }
 
         /// <summary>
