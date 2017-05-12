@@ -37,18 +37,6 @@ namespace FRCVideoSplitter2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2016")]
-        public int year {
-            get {
-                return ((int)(this["year"]));
-            }
-            set {
-                this["year"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string eventCode {
             get {
@@ -164,6 +152,54 @@ namespace FRCVideoSplitter2.Properties {
             }
             set {
                 this["endOfVideoPadTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Click Browse to Use...")]
+        public string titleCardLocation {
+            get {
+                return ((string)(this["titleCardLocation"]));
+            }
+            set {
+                this["titleCardLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Click Browse to Use...")]
+        public string watermarkLocation {
+            get {
+                return ((string)(this["watermarkLocation"]));
+            }
+            set {
+                this["watermarkLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Click Browse to Use...")]
+        public string outroLocation {
+            get {
+                return ((string)(this["outroLocation"]));
+            }
+            set {
+                this["outroLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2017")]
+        public int year {
+            get {
+                return ((int)(this["year"]));
+            }
+            set {
+                this["year"] = value;
             }
         }
     }

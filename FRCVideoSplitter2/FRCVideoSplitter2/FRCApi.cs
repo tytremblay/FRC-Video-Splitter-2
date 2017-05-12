@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Reflection;
 using System.Net;
+using System.IO;
 
 namespace FRCVideoSplitter2
 {
     class FRCApi
     {
         private string baseUrl = "https://frc-api.firstinspires.org/v2.0";
-
-        //private string apiToken = "INSERT API TOKEN HERE";
+        private string apiToken = "aherreid:F37A9A1E-F115-4A88-B92B-0F284B3C21E9";
 
         public static string QualificationMatchesString = "qualification";
         public static string PlayoffMatchesString = "playoff";
@@ -46,6 +46,18 @@ namespace FRCVideoSplitter2
             {
                 Console.WriteLine(e.Message);
                 return false;
+            }
+        }
+
+        public static void deleteRequestTimes()
+        {
+            try
+            {
+                File.Delete("requestTimes.bin");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
 

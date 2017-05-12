@@ -49,19 +49,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>w6pMaVQU0zrcq8qMKGAmw/5TyJSdLrbyCHZZBHf7lYI=</dsig:DigestValue>
+        <dsig:DigestValue>Q+MOHvPsxFvuwC5Tt6RJlVsl1LJD6wDb+cs0bbO8xRo=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="FRCVideoSplitter2.exe" size="117760">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="FRCVideoSplitter2.exe" size="134656">
       <assemblyIdentity name="FRCVideoSplitter2" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>WHkdfQ+FRcZ/myVgd5Nq7LJynuuFBqJrCp058eXFbvQ=</dsig:DigestValue>
+        <dsig:DigestValue>us88+bIauz8PjVSuUPnewLflPvd30FpRw44IpXcLXBg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -145,7 +145,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>WJrBZtmPe7y5YULD37sem1pdB4YGB8L3y2NPGrfUQa4=</dsig:DigestValue>
+        <dsig:DigestValue>4br8641oQb/vh/s8TZLZCgQqjFXbr3uM1GWfBGktU8o=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -266,13 +266,13 @@
       <dsig:DigestValue>tveHiMyywaGjBGOX32Ffkmp7zwlvKFGKZqt1whtTfhw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="FRCVideoSplitter2.exe.config" size="2938">
+  <file name="FRCVideoSplitter2.exe.config" size="3318">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>i8d8MM7/mVNn5X/tJW8jfAGNHaPRKK4LbpofvCQ5xXY=</dsig:DigestValue>
+      <dsig:DigestValue>kwcv/BoJysqUkk5tvmb9w42b62LDcQT+K23avy7zlqY=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

@@ -5,9 +5,6 @@
     <Setting Name="eventsJsonString" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="year" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2016</Value>
-    </Setting>
     <Setting Name="eventCode" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -37,6 +34,18 @@
     </Setting>
     <Setting Name="endOfVideoPadTime" Type="System.String" Scope="User">
       <Value Profile="(Default)">00:00:15</Value>
+    </Setting>
+    <Setting Name="titleCardLocation" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Click Browse to Use...</Value>
+    </Setting>
+    <Setting Name="watermarkLocation" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Click Browse to Use...</Value>
+    </Setting>
+    <Setting Name="outroLocation" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Click Browse to Use...</Value>
+    </Setting>
+    <Setting Name="year" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2017</Value>
     </Setting>
   </Settings>
 </SettingsFile>
