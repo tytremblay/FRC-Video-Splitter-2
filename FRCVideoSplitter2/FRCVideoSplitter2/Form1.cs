@@ -595,8 +595,8 @@ namespace FRCVideoSplitter2
                 {
                     //Add title card
                     string argTitle = "-y -loop 1 -framerate 30 -t 3 -i \"" + Properties.Settings.Default.titleCardLocation + "\""; //assumes 30 fps videos
-                    argTitle += " -vf \"[in]drawtext=fontfile=FreeSerif.ttf:text='" + eventsComboBox.Text + "':x=(w-text_w)/2:y=(h-(3.5*text_h)):fontcolor=white:fontsize=40:box=1:boxcolor=black@0.65,";
-                    argTitle += " drawtext=fontfile=FreeSerif.ttf:text='" + match.Level.ToString() + " " + match.MatchNumber.ToString() + "':x=(w-text_w)/2:y=(h-(2*text_h)):fontcolor=white:fontsize=40:box=1:boxcolor=black@0.65[out]\"";
+                    argTitle += " -vf \"[in]drawtext=fontfile=FreeSerif.ttf:text='" + eventsComboBox.Text + "':x=(w-text_w)/2:y=(h-(2.5*text_h)):fontcolor=white:fontsize=40:box=1:boxcolor=black@0.65,";
+                    argTitle += " drawtext=fontfile=FreeSerif.ttf:text='" + match.Level.ToString() + " " + match.MatchNumber.ToString() + "':x=(w-text_w)/2:y=(h-(1.25*text_h)):fontcolor=white:fontsize=40:box=1:boxcolor=black@0.65[out]\"";
                     argTitle += " \"renderedintroFRCSPLIT.mp4\"";
                     RunFfmpegCommand(argTitle);
                     renderedTitleCard = "renderedintroFRCSPLIT.mp4";
