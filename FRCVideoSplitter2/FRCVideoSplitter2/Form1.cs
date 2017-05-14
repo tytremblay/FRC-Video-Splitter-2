@@ -17,6 +17,7 @@ namespace FRCVideoSplitter2
     public partial class Form1 : Form
     {
         // ################# INITIALIZE ################# \\
+        bool initialLoadComplete = false;
         private List<FRCApi.Event> eventsList = new List<FRCApi.Event>();
         BindingList<SplitterTypes.Match> matchesList = new BindingList<SplitterTypes.Match>();
         List<SplitterTypes.SplitVideo> splitVideos = new List<SplitterTypes.SplitVideo>();
@@ -163,6 +164,15 @@ namespace FRCVideoSplitter2
             this.yearBox.Text = Properties.Settings.Default.year.ToString();
             List<string> eventNames = this.eventsList.Select(x => x.name).ToList();
             this.eventsComboBox.DataSource = eventNames;
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.eventName))
+            {
+                string abc = Properties.Settings.Default.eventName;
+                this.eventsComboBox.Text = Properties.Settings.Default.eventName;
+            }
+            if(!string.IsNullOrEmpty(Properties.Settings.Default.eventCode))
+            {
+                this.eventCodeBox.Text = Properties.Settings.Default.eventCode;
+            }
             this.matchesDataGridView.AutoResizeColumns();
             this.matchVideoDestinationPathTextBox.Text = Properties.Settings.Default.matchVideoDestination;
             this.sourceVideoPathTextBox.Text = Properties.Settings.Default.sourceVideoLocation;
@@ -171,6 +181,7 @@ namespace FRCVideoSplitter2
             this.outroPathTextBox.Text = Properties.Settings.Default.outroLocation;
             Properties.Settings.Default.useManualTimeStamps = manualTimestampCheckbox.Checked;
             Properties.Settings.Default.Save();
+            initialLoadComplete = true;
         }
         private void CheckAndUpdateEventList(int season)
         {
@@ -229,9 +240,12 @@ namespace FRCVideoSplitter2
         private void eventsComboBox_SelectedValueChanged(object sender, EventArgs e)
         {
             eventCodeBox.Text = eventsList.Find(i => i.name == eventsComboBox.Text).code;
-            Properties.Settings.Default.eventName = eventsComboBox.Text;
-            Properties.Settings.Default.eventCode = eventCodeBox.Text;
-            Properties.Settings.Default.Save();
+            if (initialLoadComplete)
+            {
+                Properties.Settings.Default.eventName = eventsComboBox.Text;
+                Properties.Settings.Default.eventCode = eventCodeBox.Text;
+                Properties.Settings.Default.Save();
+            }
         }
         private void eventsComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -500,12 +514,20 @@ namespace FRCVideoSplitter2
         /// </summary>
         private void splitVideosButton_Click(object sender, EventArgs e)
         {
-            bool firstRunVideo = true;//on first run we re-render the title card that might exist
             if (!HasEventSelected() || !File.Exists(sourceVideoPathTextBox.Text))//put pre-reqs here
             {
                 MessageBox.Show("Please complete missing steps above before splitting.", "Unavailable");
                 return;
             }
+            if (File.Exists("intermediate4.ts")) //delete outro if exists
+            {
+                File.Delete("intermediate4.ts");
+            }
+
+            string renderedTitleCard = null;
+            string renderedOutro = null;
+            string sourceVideoLocation = null;
+            string postResultVideoLocation = null;
 
             string sourceFile = sourceVideoPathTextBox.Text;
             progress = new ProgressDialog();
@@ -514,36 +536,37 @@ namespace FRCVideoSplitter2
             progress.Chunks = chunks;
             progress.Show();
             int completed = 0;
-            string renderedTitleCardLocation = null;
-
-            if (File.Exists(Properties.Settings.Default.titleCardLocation))
-            {
-                renderedTitleCardLocation = Path.GetTempPath() + "renderedintroFRCSPLIT.mp4";
-                File.Delete(renderedTitleCardLocation);
-
-                string arg = "-loop 1 -framerate 30 -t 3 -i \"" + Properties.Settings.Default.titleCardLocation + "\"";
-                ////arg += "-vf drawtext=fontsize = 15:fontfile = FreeSerif.ttf:text = \"WATERMARK TEXT\":y = h / 2:x = 50:fontcolor = green:fontsize = 40";
-                //arg += " drawtext=\"fontsize = 30:fontfile = FreeSerif.ttf:text = 'hello world':x = (w - text_w) / 2:y = (h - text_h) / 2\"";
-                arg += " \"" + renderedTitleCardLocation + "\"";
-                /////string arg = "-f lavfi -i color=c=red:s=320x240:d=0.5 -vf \"drawtext=fontsize=30: box = 1:boxborderw = 5:boxcolor = white@0.25: fontcolor = white:x = (w - text_w) / 2:y = (h - text_h) / 2:text = 'Stack Overflow'\" \"" + renderedTitleCardLocation + "\"";
-                //////string arg = "-loop 1 -framerate 30 -t 3 -i \"" + Properties.Settings.Default.titleCardLocation + "\" drawtext=fontfile=FreeSerif.ttf:text=helloworld \"" + renderedTitleCardLocation + "\"";
-                RunFfmpegCommand(arg);
-            }
 
             List<SplitterTypes.Match> includedMatches = matchesList.Where(i => i.Include == true).ToList();
 
             foreach (SplitterTypes.Match match in includedMatches)
             {
+                renderedTitleCard = null;//reset
+                sourceVideoLocation = null;
+                postResultVideoLocation = null;
+
                 progress.SetText("Splitting video " + (completed + 1) + " of " + matchesList.Where(i => i.Include == true).ToList().Count);
                 string startTime = match.TimeStamp.ToString("HH:mm:ss.fff");
                 string videoName = match.Description.ToString() + " - " + yearBox.Text + " " + eventsComboBox.Text + Path.GetExtension(sourceFile);
                 string destinationFile = Path.Combine(matchVideoDestinationPathTextBox.Text, videoName);
                 string matchLengthString = null;
                 string watermarkFileLocation = null;
+                bool doSplitMatchVideos = false;
+
+                TimeSpan padTime = TimeSpan.Parse(Properties.Settings.Default.endOfVideoPadTime);
+                TimeSpan matchLength = (((DateTime)match.PostResultTime - match.ActualStartTime).Add(padTime)); //pad time covers the post-result, normal case
+
                 if (Properties.Settings.Default.useScoreDisplayedTime && match.PostResultTime.HasValue)
                 {
-                    TimeSpan padTime = TimeSpan.Parse(Properties.Settings.Default.endOfVideoPadTime);
-                    TimeSpan matchLength = (((DateTime)match.PostResultTime - match.ActualStartTime).Add(padTime));
+                    TimeSpan timeBeforePost = match.PostResultTime.Value - match.ActualStartTime;
+                    if (timeBeforePost > new TimeSpan(0, 0, 15)) //if it's more than 15 second to post, cut that out.
+                    {
+                        doSplitMatchVideos = true;
+                    }
+                    if (doSplitMatchVideos)
+                    {
+                        matchLength = new TimeSpan(0, 2, 40);//tiny bit longer than normal match
+                    }
                     matchLengthString = matchLength.ToString(@"hh\:mm\:ss");
                 }
                 if (File.Exists(Properties.Settings.Default.watermarkLocation))
@@ -552,39 +575,105 @@ namespace FRCVideoSplitter2
                 }
 
                 string args = BuildFfmpegControlScript(startTime, sourceFile, destinationFile, matchLengthString, watermarkFileLocation);
-
+                sourceVideoLocation = destinationFile;
                 RunFfmpegCommand(args); //run original split video
 
-                if (File.Exists(renderedTitleCardLocation))
+                if (doSplitMatchVideos) //post-result separate from match video
                 {
-                    //Add title card
-                    if (firstRunVideo || !File.Exists("intermediate1.ts"))
-                    {
-                        string args2 = "-y -i \"" + renderedTitleCardLocation + "\" -c copy -bsf:v h264_mp4toannexb -f mpegts intermediate1.ts";
-                        RunFfmpegCommand(args2);
-                    }
+                    TimeSpan postResultShowTime = new TimeSpan(0, 0, 15);
+                    string postResultFileName = "postresultportion.mp4";
 
-                    string args3 = "-y -i \"" + destinationFile + "\" -c copy -bsf:v h264_mp4toannexb -f mpegts intermediate2.ts";
-                    RunFfmpegCommand(args3);
+                    TimeSpan timeBetweenStartAndPost = (((DateTime)match.PostResultTime - match.ActualStartTime));
+                    DateTime postResultStart = match.TimeStamp + timeBetweenStartAndPost + new TimeSpan(0, 0, 3);
 
-                    string args4 = "-y -i \"concat:intermediate1.ts|intermediate2.ts\" -c copy -bsf:a aac_adtstoasc \"" + destinationFile + "\"";
-                    RunFfmpegCommand(args4); //override original split with concat split
+                    string argsPostResult = BuildFfmpegControlScript(postResultStart.ToString(@"HH\:mm\:ss"), sourceFile, postResultFileName, postResultShowTime.ToString(@"hh\:mm\:ss"), watermarkFileLocation);
+                    RunFfmpegCommand(argsPostResult); //run post-result
+                    postResultVideoLocation = postResultFileName;
                 }
 
+                if (File.Exists(Properties.Settings.Default.titleCardLocation))
+                {
+                    //Add title card
+                    string argTitle = "-y -loop 1 -framerate 30 -t 3 -i \"" + Properties.Settings.Default.titleCardLocation + "\""; //assumes 30 fps videos
+                    argTitle += " -vf \"[in]drawtext=fontfile=FreeSerif.ttf:text='" + eventsComboBox.Text + "':x=(w-text_w)/2:y=(h-(3.5*text_h)):fontcolor=white:fontsize=40:box=1:boxcolor=black@0.65,";
+                    argTitle += " drawtext=fontfile=FreeSerif.ttf:text='" + match.Level.ToString() + " " + match.MatchNumber.ToString() + "':x=(w-text_w)/2:y=(h-(2*text_h)):fontcolor=white:fontsize=40:box=1:boxcolor=black@0.65[out]\"";
+                    argTitle += " \"renderedintroFRCSPLIT.mp4\"";
+                    RunFfmpegCommand(argTitle);
+                    renderedTitleCard = "renderedintroFRCSPLIT.mp4";
+                }
+                if (File.Exists(Properties.Settings.Default.outroLocation) && renderedOutro == null)
+                {
+                    renderedOutro = Properties.Settings.Default.outroLocation;//no additional processing is done to the outro file. But that could be done here if needed.
+                }
+
+                //Now render the final version based on title card, count of match videos portion (1 or 2), outro settings
+
+                //If a title card, post result or outro exist, we need to re-render the output
+                if (renderedTitleCard != null || postResultVideoLocation != null || renderedOutro != null)
+                {
+                    List<string> toRender = new List<string>();
+                    if (renderedTitleCard != null)
+                    {
+                        string argsTitle = "-y -i \"renderedintroFRCSPLIT.mp4\" -c copy -bsf:v h264_mp4toannexb -f mpegts intermediate1.ts";
+                        RunFfmpegCommand(argsTitle);
+                        toRender.Add("intermediate1.ts");
+                    }
+
+                    string argsSource = "-y -i \"" + sourceVideoLocation + "\" -c copy -bsf:v h264_mp4toannexb -f mpegts intermediate2.ts";
+                    RunFfmpegCommand(argsSource);
+                    toRender.Add("intermediate2.ts");
+
+                    if (postResultVideoLocation != null)
+                    {
+                        string argsPostResult = "-y -i \"postresultportion.mp4\" -c copy -bsf:v h264_mp4toannexb -f mpegts intermediate3.ts";
+                        RunFfmpegCommand(argsPostResult);
+                        toRender.Add("intermediate3.ts");
+                    }
+                    if (renderedOutro != null)
+                    {
+                        string argsOutro = "-y -i \"" + renderedOutro + "\" -c copy -bsf:v h264_mp4toannexb -f mpegts intermediate4.ts";
+                        RunFfmpegCommand(argsOutro);
+                        toRender.Add("intermediate4.ts");
+                    }
+
+                    //Now merge them all
+                    string videoPipe = null;
+                    foreach (string rend in toRender)
+                    {
+                        if (videoPipe != null) //only add bar between, not before first video
+                        {
+                            videoPipe += "|";
+                        }
+                        videoPipe += rend;
+                    }
+
+                    string args4 = "-y -i \"concat:" + videoPipe + "\" -c copy -bsf:a aac_adtstoasc \"" + destinationFile + "\"";
+                    RunFfmpegCommand(args4); //override original split with concat split
+                }
+                
                 progress.SetCompletedChunks(++completed);
 
                 //save the video path in the match object
                 match.VideoPath = destinationFile;
                 splitVideos.Add(new SplitterTypes.SplitVideo(eventCodeBox.Text, match.Description.ToString(), destinationFile));
-            }
 
-            if (File.Exists("intermediate1.ts")) //cleanup
-            {
-                File.Delete("intermediate1.ts");
-            }
-            if (File.Exists("intermediate2.ts"))
-            {
-                File.Delete("intermediate2.ts");
+                if (File.Exists("intermediate1.ts")) //cleanup
+                {
+                    File.Delete("intermediate1.ts");
+                }
+                if (File.Exists("intermediate2.ts"))
+                {
+                    File.Delete("intermediate2.ts");
+                }
+                if (File.Exists("intermediate3.ts"))
+                {
+                    File.Delete("intermediate3.ts");
+                }
+                if (File.Exists("postresultportion.mp4"))
+                {
+                    File.Delete("postresultportion.mp4");
+                }
+                //No need to delete outro/intermediate4, it can be rendered once and re-used
             }
 
             string importFilePath = Path.Combine(matchVideoDestinationPathTextBox.Text, eventsComboBox.Text + ".splt");
@@ -599,7 +688,7 @@ namespace FRCVideoSplitter2
             {
                 MatchLength = Properties.Settings.Default.matchLength;
             }
-            MatchLength = Properties.Settings.Default.matchLength;
+
             string controlScript = "-y ";
 
             controlScript += "-ss " + StartTime + " -i \"" + SourceFile + "\"";
@@ -610,6 +699,8 @@ namespace FRCVideoSplitter2
             }
 
             controlScript += " -t " + MatchLength;
+
+            controlScript += " -threads 2";//this will limit the CPU usage
 
             if (WatermarkSourceFile == null) //can't use this copy option if we're going watermark
             {
