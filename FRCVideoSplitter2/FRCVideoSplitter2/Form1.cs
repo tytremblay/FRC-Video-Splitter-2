@@ -501,7 +501,7 @@ namespace FRCVideoSplitter2
                     {
                         if (splitArr[1].StartsWith(Properties.Settings.Default.eventName))
                         {
-                            matchesList.First(m => m.Description == splitArr[0]).VideoPath = f.FullName;
+                            matchesList.First(m => m.FIRSTDescription == splitArr[0]).VideoPath = f.FullName;
                         }
                     }
                 }
@@ -547,7 +547,7 @@ namespace FRCVideoSplitter2
 
                 progress.SetText("Splitting video " + (completed + 1) + " of " + matchesList.Where(i => i.Include == true).ToList().Count);
                 string startTime = match.TimeStamp.ToString("HH:mm:ss.fff");
-                string videoName = match.Description.ToString() + " - " + yearBox.Text + " " + eventsComboBox.Text + Path.GetExtension(sourceFile);
+                string videoName = match.FIRSTDescription.ToString() + " - " + yearBox.Text + " " + eventsComboBox.Text + Path.GetExtension(sourceFile);
                 string destinationFile = Path.Combine(matchVideoDestinationPathTextBox.Text, videoName);
                 string matchLengthString = null;
                 string watermarkFileLocation = null;
@@ -559,7 +559,7 @@ namespace FRCVideoSplitter2
                 if (Properties.Settings.Default.useScoreDisplayedTime && match.PostResultTime.HasValue)
                 {
                     TimeSpan timeBeforePost = match.PostResultTime.Value - match.ActualStartTime;
-                    if (timeBeforePost > new TimeSpan(0, 0, 15)) //if it's more than 15 second to post, cut that out.
+                    if (timeBeforePost > new TimeSpan(0, 2, 45)) //if it's more than 15 second to post (2m30s for match plus a little more), cut that extra out.
                     {
                         doSplitMatchVideos = true;
                     }
@@ -655,7 +655,7 @@ namespace FRCVideoSplitter2
 
                 //save the video path in the match object
                 match.VideoPath = destinationFile;
-                splitVideos.Add(new SplitterTypes.SplitVideo(eventCodeBox.Text, match.Description.ToString(), destinationFile));
+                splitVideos.Add(new SplitterTypes.SplitVideo(eventCodeBox.Text, match.FIRSTDescription.ToString(), destinationFile));
 
                 if (File.Exists("intermediate1.ts")) //cleanup
                 {
@@ -768,25 +768,25 @@ namespace FRCVideoSplitter2
                 {
                     sb.AppendFormat("{0},", Properties.Settings.Default.year.ToString());
                     sb.AppendFormat("{0},", evt.code.ToLower());
-                    if (match.Description.StartsWith("QF"))
+                    if (match.TbaDescription.StartsWith("QF"))
                     {
                         sb.AppendFormat("{0},", "qf");
-                        sb.AppendFormat("{0},", match.Description.Substring(2));
+                        sb.AppendFormat("{0},", match.TbaDescription.Substring(2));
                     }
-                    else if (match.Description.StartsWith("SF"))
+                    else if (match.TbaDescription.StartsWith("SF"))
                     {
                         sb.AppendFormat("{0},", "sf");
-                        sb.AppendFormat("{0},", match.Description.Substring(2));
+                        sb.AppendFormat("{0},", match.TbaDescription.Substring(2));
                     }
-                    else if (match.Description.StartsWith("F"))
+                    else if (match.TbaDescription.StartsWith("F"))
                     {
                         sb.AppendFormat("{0},", "f");
-                        sb.AppendFormat("{0},", match.Description.Substring(1));
+                        sb.AppendFormat("{0},", match.TbaDescription.Substring(1));
                     }
                     else
                     {
                         sb.AppendFormat("{0},", "q");
-                        sb.AppendFormat("{0},", match.Description.Substring(1));
+                        sb.AppendFormat("{0},", match.TbaDescription.Substring(1));
                     }
                     sb.AppendFormat("{0}{1}{2}", "http://www.youtube.com/watch?v=", match.YouTubeId, Environment.NewLine);
                 }
@@ -1194,7 +1194,7 @@ namespace FRCVideoSplitter2
         {
             matchesList[videoUploadIndex].YouTubeId = id;
             uploader.AddToPlaylist(currentPlaylistId, id);
-            splitVideos.First(i => i.match == matchesList[videoUploadIndex].Description).youTube = id;
+            splitVideos.First(i => i.match == matchesList[videoUploadIndex].FIRSTDescription).youTube = id;
         }
         /// <summary>
         /// Cancel the upload process.
@@ -1222,18 +1222,21 @@ namespace FRCVideoSplitter2
 
             /*Build the description
              * example:
+             * Event Description
              * Reading High School, Reading, MA, USA
              * 3/6/2015 - 3/8/2015
-             * http://www.thebluealliance.com/event/2015marea
-             * "Created by FRC Video Splitter (https://github.com/tytremblay/FRC-Video-Splitter-2)"
+             * http://www.thebluealliance.com/event/2015marea / https://frc-events.firstinspires.org/2017/MAREA
+             * Videos Prepared by FRC Video Splitter (https://github.com/tytremblay/FRC-Video-Splitter-2)"
              */
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(playlistName);
-            sb.AppendLine(String.Join(", ", new String[] { evt.venue, evt.city, evt.stateProv, evt.country }));
+            sb.AppendLine(playlistName); //event name
+            sb.AppendLine(String.Join(", ", new String[] { evt.venue, evt.city, evt.stateProv, evt.country })); //location
             sb.AppendLine(String.Join(" - ", new String[] { evt.dateStart.ToString("MM/dd/yyyy"), evt.dateEnd.ToString("MM/dd/yyyy") }));
-            sb.AppendLine("http://www.thebluealliance.com/event/" + Properties.Settings.Default.year.ToString() + evt.code.ToLower());
-            sb.AppendLine("Created by FRC Video Splitter (https://github.com/tytremblay/FRC-Video-Splitter-2)");
+            //sb.AppendLine("http://www.thebluealliance.com/event/" + Properties.Settings.Default.year.ToString() + evt.code.ToLower());//TBA Link
+            sb.AppendLine("Event Results: https://frc-events.firstinspires.org/" + Properties.Settings.Default.year.ToString() + "/" + evt.code.ToUpper());//FIRST Link
+            sb.AppendLine();
+            sb.AppendLine("Videos Prepared by FRC Video Splitter (https://github.com/tytremblay/FRC-Video-Splitter-2)");
 
             String playlistDesc = sb.ToString();
 
@@ -1273,7 +1276,7 @@ namespace FRCVideoSplitter2
                 }
                 else if (matchesList[videoUploadIndex].VideoPath != "")
                 {
-                    String videoTitle = matchesList[videoUploadIndex].Description + " - " + Properties.Settings.Default.year.ToString() + " " + evt.name;
+                    String videoTitle = matchesList[videoUploadIndex].FIRSTDescription + " - " + Properties.Settings.Default.year.ToString() + " " + evt.name;
 
                     //If there's already a video in the playlist by this name, grab the id and don't upload this video
                     //If the user wants to upload this video instead, they'll have to remove the other video from the playlist
@@ -1290,7 +1293,9 @@ namespace FRCVideoSplitter2
                     sb.AppendLine(videoTitle);
                     sb.AppendLine("Red (" + matchesList[videoUploadIndex].RedAlliance + ") - " + matchesList[videoUploadIndex].RedScore.ToString());
                     sb.AppendLine("Blue (" + matchesList[videoUploadIndex].BlueAlliance + ") - " + matchesList[videoUploadIndex].BlueScore.ToString());
-                    sb.AppendLine("http://www.thebluealliance.com/match/" + Properties.Settings.Default.year.ToString() + evt.code.ToLower() + "_" + matchesList[videoUploadIndex].Description.ToLower());
+                    //sb.AppendLine("http://www.thebluealliance.com/match/" + Properties.Settings.Default.year.ToString() + evt.code.ToLower() + "_" + matchesList[videoUploadIndex].TbaDescription.ToLower());//TBA Link
+                    sb.AppendLine("https://frc-events.firstinspires.org/" + Properties.Settings.Default.year.ToString() + "/" + evt.code.ToUpper() + "/" + matchesList[videoUploadIndex].Level + "/" + matchesList[videoUploadIndex].MatchNumber);//FIRST Link
+                    sb.AppendLine();
                     sb.AppendLine("Uploaded by FRC Video Splitter (https://github.com/tytremblay/FRC-Video-Splitter-2)");
                     String videoDesc = sb.ToString();
 
@@ -1574,9 +1579,9 @@ namespace FRCVideoSplitter2
 
             foreach (SplitterTypes.SplitVideo sVid in importVids)
             {
-                matchesList.First(i => i.Description == sVid.match).VideoPath = sVid.path;
-                matchesList.First(i => i.Description == sVid.match).YouTubeId = sVid.youTube;
-                matchesList.First(i => i.Description == sVid.match).Include = true;
+                matchesList.First(i => i.FIRSTDescription == sVid.match).VideoPath = sVid.path;
+                matchesList.First(i => i.FIRSTDescription == sVid.match).YouTubeId = sVid.youTube;
+                matchesList.First(i => i.FIRSTDescription == sVid.match).Include = true;
             }
         }
     }
