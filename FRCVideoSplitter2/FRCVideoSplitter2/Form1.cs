@@ -596,7 +596,7 @@ namespace FRCVideoSplitter2
                     //Add title card
                     string argTitle = "-y -loop 1 -framerate 30 -t 3 -i \"" + Properties.Settings.Default.titleCardLocation + "\""; //assumes 30 fps videos
                     argTitle += " -vf \"[in]drawtext=fontfile=FreeSerif.ttf:text='" + eventsComboBox.Text + "':x=(w-text_w)/2:y=(h-(2.5*text_h)):fontcolor=white:fontsize=40:box=1:boxcolor=black@0.65,";
-                    argTitle += " drawtext=fontfile=FreeSerif.ttf:text='" + match.Level.ToString() + " " + match.MatchNumber.ToString() + "':x=(w-text_w)/2:y=(h-(1.25*text_h)):fontcolor=white:fontsize=40:box=1:boxcolor=black@0.65[out]\"";
+                    argTitle += " drawtext=fontfile=FreeSerif.ttf:text='" + match.FIRSTDescription + "':x=(w-text_w)/2:y=(h-(1.25*text_h)):fontcolor=white:fontsize=40:box=1:boxcolor=black@0.65[out]\"";
                     argTitle += " \"renderedintroFRCSPLIT.mp4\"";
                     RunFfmpegCommand(argTitle);
                     renderedTitleCard = "renderedintroFRCSPLIT.mp4";
@@ -700,7 +700,7 @@ namespace FRCVideoSplitter2
 
             controlScript += " -t " + MatchLength;
 
-            controlScript += " -threads 2";//this will limit the CPU usage
+            controlScript += " -threads 3";//this will limit the CPU usage
 
             if (WatermarkSourceFile == null) //can't use this copy option if we're going watermark
             {
