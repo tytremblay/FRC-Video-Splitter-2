@@ -700,7 +700,7 @@ namespace FRCVideoSplitter2
 
             controlScript += " -t " + MatchLength;
 
-            controlScript += " -threads 3";//this will limit the CPU usage
+            controlScript += " -threads 2";//this will limit the CPU usage
 
             if (WatermarkSourceFile == null) //can't use this copy option if we're going watermark
             {

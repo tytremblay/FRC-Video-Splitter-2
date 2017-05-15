@@ -13,7 +13,8 @@ namespace FRCVideoSplitter2
     class FRCApi
     {
         private string baseUrl = "https://frc-api.firstinspires.org/v2.0";
-        private string apiToken = "aherreid:F37A9A1E-F115-4A88-B92B-0F284B3C21E9";
+        
+        //private string apiToken = "user:token";
 
         public static string QualificationMatchesString = "qualification";
         public static string PlayoffMatchesString = "playoff";
