@@ -1,12 +1,9 @@
-﻿/*
-*/
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Upload;
@@ -196,15 +193,24 @@ namespace FRCVideoSplitter2
                 video.Snippet.Description = description;
                 video.Snippet.CategoryId = "28"; // See https://developers.google.com/youtube/v3/docs/videoCategories/list
                 video.Status = new VideoStatus();
-                video.Status.PrivacyStatus = "public"; // or "private" or "public"
+                if (Properties.Settings.Default.uploadYoutubeAsPrivate)
+                {
+                    video.Status.PrivacyStatus = "private"; // or "private" or "public"
+                }
+                else
+                {
+                    video.Status.PrivacyStatus = "public"; // or "private" or "public"
+                }
+                video.Status.Embeddable = false;//don't allow embedding
+                video.Status.PublicStatsViewable = false;
                 var filePath = path;
 
                 using (var fileStream = new FileStream(filePath, FileMode.Open))
                 {
                     const int KB = 0x400;
                     var minimumChunkSize = 256 * KB;
-
-                    var videosInsertRequest = youtubeService.Videos.Insert(video, "snippet, status", fileStream, "video/");
+                    var videosInsertRequest = youtubeService.Videos.Insert(video, "snippet, status", fileStream, "video/*");
+                    videosInsertRequest.NotifySubscribers = false;
                     videosInsertRequest.ProgressChanged += videosInsertRequest_ProgressChanged;
                     videosInsertRequest.ResponseReceived += videosInsertRequest_ResponseReceived;
 

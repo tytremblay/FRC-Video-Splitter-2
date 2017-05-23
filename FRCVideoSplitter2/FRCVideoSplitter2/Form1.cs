@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -22,6 +23,7 @@ namespace FRCVideoSplitter2
         BindingList<SplitterTypes.Match> matchesList = new BindingList<SplitterTypes.Match>();
         List<SplitterTypes.SplitVideo> splitVideos = new List<SplitterTypes.SplitVideo>();
         FRCApi api = new FRCApi();
+        TBAApi tbaApi = new TBAApi();
         ProgressDialog progress;
         YouTubeApi.VideoUploader uploader = new YouTubeApi.VideoUploader();
         int videoUploadIndex = 0;
@@ -43,14 +45,7 @@ namespace FRCVideoSplitter2
         {
             if (Properties.Settings.Default.firstTimeRunning)
             {
-                if (MessageBox.Show(String.Format("Welcome to FRCVideoSplitter2.\nWe'll need an event list to get started. Would you like to download now?", Properties.Settings.Default.year), "Welcome", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    CheckAndUpdateEventList(Properties.Settings.Default.year);
-                }
-                else
-                {
-                    MessageBox.Show("When you're ready to download the event list, just click the Refresh button next to the season textbox.", "Reminder");
-                }
+                MessageBox.Show("Welcome to FRC Video Splitter 2! In order to use this program, we'll need to download some data from FIRST. Please go to the settings menu and enter your API access info, then click \"Refresh\" next to the event selection box to get the event list.", "Welcome");
                 Properties.Settings.Default.firstTimeRunning = false;
                 Properties.Settings.Default.Save();
             }
@@ -78,14 +73,24 @@ namespace FRCVideoSplitter2
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             openFileDialog1.DefaultExt = ".splt";
+            openFileDialog1.Filter = "Splitter files (*.splt) | *.splt";
+            openFileDialog1.FileName = "";
             DialogResult result = openFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
-                matchesList = HelperDataStructures.ReadObjectFromFile<BindingList<SplitterTypes.Match>>(openFileDialog1.FileName);
-                Properties.Settings.Default.currentFileName = openFileDialog1.FileName;
-                Properties.Settings.Default.Save();
-                this.matchesDataGridView.DataSource = matchesList;
-                this.SetDataGridViewFormatting();
+                try
+                {
+                    matchesList = HelperDataStructures.ReadObjectFromFile<BindingList<SplitterTypes.Match>>(openFileDialog1.FileName);
+                    Properties.Settings.Default.currentFileName = openFileDialog1.FileName;
+                    Properties.Settings.Default.Save();
+                    this.matchesDataGridView.DataSource = matchesList;
+                    this.SetDataGridViewFormatting();
+                    MessageBox.Show("Make sure to change the event dropdown to match the file you just loaded! No need to hit Get Match Data since you're opening a file.");
+                }
+                catch
+                {
+                    MessageBox.Show("Could not load Splitter file.");
+                }
             }
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -96,18 +101,36 @@ namespace FRCVideoSplitter2
             }
             else
             {
-                HelperDataStructures.WriteObjectToFile<BindingList<SplitterTypes.Match>>(Properties.Settings.Default.currentFileName, matchesList);
+                writeEventFileToDisk();
             }
+        }
+        private void writeEventFileToDisk()
+        {
+            string path = null;
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.currentFileName))
+            {
+                path = Properties.Settings.Default.currentFileName;
+            }
+            else if (!string.IsNullOrEmpty(matchVideoDestinationPathTextBox.Text))
+            {
+                path = Path.Combine(matchVideoDestinationPathTextBox.Text, Properties.Settings.Default.eventName + ".splt");
+            }
+            else
+            {
+                MessageBox.Show("Could not determine where to save. Using Desktop. Set save location by using File menu or setting the Video destination folder.");
+                path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), eventsComboBox.Text + ".splt");
+            }
+            HelperDataStructures.WriteObjectToFile<BindingList<SplitterTypes.Match>>(path, matchesList);
         }
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openFileDialog1.Filter = "Splitter files (*.splt) | *.splt|All Files (*.*)|*.*";
-            openFileDialog1.FileName = Properties.Settings.Default.year + " " + eventsComboBox.Text + ".splt";
-            DialogResult result = openFileDialog1.ShowDialog();
+            saveFileDialog1.Filter = "Splitter files (*.splt) | *.splt|All Files (*.*)|*.*";
+            saveFileDialog1.FileName = Properties.Settings.Default.year + " " + eventsComboBox.Text + ".splt";
+            DialogResult result = saveFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
-                HelperDataStructures.WriteObjectToFile<BindingList<SplitterTypes.Match>>(openFileDialog1.FileName, matchesList);
-                Properties.Settings.Default.currentFileName = openFileDialog1.FileName;
+                HelperDataStructures.WriteObjectToFile<BindingList<SplitterTypes.Match>>(saveFileDialog1.FileName, matchesList);
+                Properties.Settings.Default.currentFileName = saveFileDialog1.FileName;
                 Properties.Settings.Default.Save();
             }
         }
@@ -169,7 +192,7 @@ namespace FRCVideoSplitter2
                 string abc = Properties.Settings.Default.eventName;
                 this.eventsComboBox.Text = Properties.Settings.Default.eventName;
             }
-            if(!string.IsNullOrEmpty(Properties.Settings.Default.eventCode))
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.eventCode))
             {
                 this.eventCodeBox.Text = Properties.Settings.Default.eventCode;
             }
@@ -179,6 +202,8 @@ namespace FRCVideoSplitter2
             this.titleCardPathTextBox.Text = Properties.Settings.Default.titleCardLocation;
             this.watermarkPathTextBox.Text = Properties.Settings.Default.watermarkLocation;
             this.outroPathTextBox.Text = Properties.Settings.Default.outroLocation;
+            this.tbaAuthId.Text = Properties.Settings.Default.tbaAuthId;
+            this.tbaSecret.Text = Properties.Settings.Default.tbaAuthSecret;
             Properties.Settings.Default.useManualTimeStamps = manualTimestampCheckbox.Checked;
             Properties.Settings.Default.Save();
             initialLoadComplete = true;
@@ -196,9 +221,12 @@ namespace FRCVideoSplitter2
                 Properties.Settings.Default.eventsJsonString = events;
                 Properties.Settings.Default.Save();
             }
-            catch
+            catch (WebException ex)
             {
-
+                if (((HttpWebResponse)ex.Response).StatusCode != HttpStatusCode.NotModified) //all except this code would be bad
+                {
+                    MessageBox.Show("Unable to get Event List. Have you added your access key in Settings? Detail:\n\n" + ex.ToString());
+                }
             }
 
             updateObjects();
@@ -317,26 +345,38 @@ namespace FRCVideoSplitter2
             {
                 return;
             }
-
-            openFileDialog1.FileName = null;
-            openFileDialog1.Multiselect = true;
-            openFileDialog1.Filter = null;
-            DialogResult result = openFileDialog1.ShowDialog();
-            if (result == DialogResult.OK)
+            try
             {
-                List<FileInfo> selectedFiles = new List<FileInfo>();
-
-                foreach (String file in openFileDialog1.FileNames)
+                openFileDialog1.FileName = null;
+                openFileDialog1.Multiselect = true;
+                openFileDialog1.Filter = null;
+                DialogResult result = openFileDialog1.ShowDialog();
+                if (result == DialogResult.OK)
                 {
-                    selectedFiles.Add(new FileInfo(file));
-                }
+                    List<FileInfo> selectedFiles = new List<FileInfo>();
 
-                selectedFiles = selectedFiles.OrderBy(f => f.LastWriteTime).ToList();
-
-                foreach (FileInfo file in selectedFiles)
-                {
-                    matchesList.First(i => i.VideoPath == "" && i.Include == true).VideoPath = file.FullName;
+                    foreach (String file in openFileDialog1.FileNames)
+                    {
+                        selectedFiles.Add(new FileInfo(file));
+                    }
+                    List<FileInfo> remainingFiles = selectedFiles.ToList();//operate on the copy
+                    foreach (SplitterTypes.Match match in matchesList.Where(x => x.Include == true))
+                    {
+                        foreach (FileInfo file in selectedFiles)
+                        {
+                            if (file.Name.StartsWith(match.FIRSTDescription + " "))//match desc and the space (to prevent matching QM1 to QM19, etc)
+                            {
+                                match.VideoPath = file.FullName;
+                                remainingFiles.Remove(file);
+                            }
+                        }
+                    }
+                    writeEventFileToDisk();
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to complete the Import. Details:\n\n" + ex.ToString());
             }
         }
         private void titleCardBrowseButton_Click(object sender, EventArgs e)
@@ -507,6 +547,21 @@ namespace FRCVideoSplitter2
                 }
             }
         }
+        private void notifyTbaClear_Click(object sender, EventArgs e)
+        {
+            tbaAuthId.Text = "Auth ID";
+            tbaSecret.Text = "Secret";
+        }
+        private void tbaAuthId_Changed(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.tbaAuthId = tbaAuthId.Text;
+            Properties.Settings.Default.Save();
+        }
+        private void tbaAuthSecret_Changed(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.tbaAuthSecret = tbaSecret.Text;
+            Properties.Settings.Default.Save();
+        }
 
         // ################# ACTION BUTTONS ################# \\
         /// <summary>
@@ -650,7 +705,7 @@ namespace FRCVideoSplitter2
                     string args4 = "-y -i \"concat:" + videoPipe + "\" -c copy -bsf:a aac_adtstoasc \"" + destinationFile + "\"";
                     RunFfmpegCommand(args4); //override original split with concat split
                 }
-                
+
                 progress.SetCompletedChunks(++completed);
 
                 //save the video path in the match object
@@ -681,7 +736,6 @@ namespace FRCVideoSplitter2
             HelperDataStructures.WriteObjectToFile<BindingList<SplitterTypes.Match>>(importFilePath, matchesList);
             progress.Close();
         }
-
         private string BuildFfmpegControlScript(string StartTime, string SourceFile, string DestinationFile, string MatchLength = null, string WatermarkSourceFile = null)
         {
             if (MatchLength == null)
@@ -700,7 +754,7 @@ namespace FRCVideoSplitter2
 
             controlScript += " -t " + MatchLength;
 
-            controlScript += " -threads 2";//this will limit the CPU usage
+            controlScript += " -threads 3";//this will limit the CPU usage
 
             if (WatermarkSourceFile == null) //can't use this copy option if we're going watermark
             {
@@ -711,7 +765,6 @@ namespace FRCVideoSplitter2
 
             return controlScript;
         }
-
         private void RunFfmpegCommand(string command)
         {
             Console.WriteLine(command);
@@ -755,6 +808,11 @@ namespace FRCVideoSplitter2
         /// </summary>
         private void tbaSpreadsheetButton_Click(object sender, EventArgs e)
         {
+            if (!HasEventSelected())
+            {
+                return;
+            }
+
             FRCApi.Event evt = eventsList.Find(i => i.name == Properties.Settings.Default.eventName);
             String fileName = "TBA - " + Properties.Settings.Default.year.ToString() + " " + evt.name + ".csv";
 
@@ -794,6 +852,34 @@ namespace FRCVideoSplitter2
 
             File.WriteAllText(filePath, sb.ToString());
             MessageBox.Show("TBA .csv file written to:\n" + filePath, "SUCCESS", MessageBoxButtons.OK);
+        }
+        private async void notifyTba_Clicked(object sender, EventArgs e)
+        {
+            progress = new ProgressDialog();
+            progress.SetText("Please Wait...");
+            progress.Show();
+            bool failures = false;
+            foreach(SplitterTypes.Match m in matchesList.Where(x => x.Include == true && x.ReportedToTBA == false)) //for each one we've uploaded, but not told TBA about
+            {
+                bool tbaResult = await tbaApi.writeTbaMatchVideo(tbaAuthId.Text, tbaSecret.Text, eventCodeBox.Text, m.TbaDescription, m.YouTubeId);
+                if (tbaResult)
+                {
+                    m.ReportedToTBA = true;
+                }
+                else
+                {
+                    failures = true;
+                }
+            }
+            progress.Close();
+            if (failures)
+            {
+                MessageBox.Show("One or more notifications failed. Please see markers in grid for which videos succeeded.");
+            }
+            else
+            {
+                writeEventFileToDisk();
+            }
         }
         private void saveScoreDetailsButton_Click(object sender, EventArgs e)
         {
@@ -1190,11 +1276,20 @@ namespace FRCVideoSplitter2
         /// <summary>
         /// When a video is done, associate its ID to the given playlist
         /// </summary>
-        private void vid_UploadCompleted(object sender, string id)
+        private async void vid_UploadCompleted(object sender, string id)
         {
             matchesList[videoUploadIndex].YouTubeId = id;
             uploader.AddToPlaylist(currentPlaylistId, id);
-            splitVideos.First(i => i.match == matchesList[videoUploadIndex].FIRSTDescription).youTube = id;
+            //splitVideos.First(i => i.match == matchesList[videoUploadIndex].FIRSTDescription).youTube = id;            
+            if (tbaAuthId.Text != "Auth ID") //try to tell blue alliance about the video
+            {
+                bool tbaResult = await tbaApi.writeTbaMatchVideo(tbaAuthId.Text, tbaSecret.Text, eventCodeBox.Text, matchesList[videoUploadIndex].TbaDescription, id);
+                if (tbaResult)
+                {
+                    matchesList[videoUploadIndex].ReportedToTBA = true;
+                }
+            }
+            writeEventFileToDisk();
         }
         /// <summary>
         /// Cancel the upload process.
@@ -1230,13 +1325,14 @@ namespace FRCVideoSplitter2
              */
 
             StringBuilder sb = new StringBuilder();
+            sb.AppendLine("FIRST Robotics Competition");
             sb.AppendLine(playlistName); //event name
             sb.AppendLine(String.Join(", ", new String[] { evt.venue, evt.city, evt.stateProv, evt.country })); //location
             sb.AppendLine(String.Join(" - ", new String[] { evt.dateStart.ToString("MM/dd/yyyy"), evt.dateEnd.ToString("MM/dd/yyyy") }));
             //sb.AppendLine("http://www.thebluealliance.com/event/" + Properties.Settings.Default.year.ToString() + evt.code.ToLower());//TBA Link
             sb.AppendLine("Event Results: https://frc-events.firstinspires.org/" + Properties.Settings.Default.year.ToString() + "/" + evt.code.ToUpper());//FIRST Link
             sb.AppendLine();
-            sb.AppendLine("Videos Prepared by FRC Video Splitter (https://github.com/tytremblay/FRC-Video-Splitter-2)");
+            sb.AppendLine("Videos Prepared by FRC Video Splitter");
 
             String playlistDesc = sb.ToString();
 
@@ -1274,7 +1370,7 @@ namespace FRCVideoSplitter2
                     e.Cancel = true;
                     break;
                 }
-                else if (matchesList[videoUploadIndex].VideoPath != "")
+                else if (!string.IsNullOrEmpty(matchesList[videoUploadIndex].VideoPath) && matchesList[videoUploadIndex].Include == true)//only try if it's "included" and has a video path
                 {
                     String videoTitle = matchesList[videoUploadIndex].FIRSTDescription + " - " + Properties.Settings.Default.year.ToString() + " " + evt.name;
 
@@ -1291,12 +1387,12 @@ namespace FRCVideoSplitter2
 
                     sb = new StringBuilder();
                     sb.AppendLine(videoTitle);
-                    sb.AppendLine("Red (" + matchesList[videoUploadIndex].RedAlliance + ") - " + matchesList[videoUploadIndex].RedScore.ToString());
-                    sb.AppendLine("Blue (" + matchesList[videoUploadIndex].BlueAlliance + ") - " + matchesList[videoUploadIndex].BlueScore.ToString());
+                    sb.AppendLine("Red (Teams " + matchesList[videoUploadIndex].RedAlliance + ") - " + matchesList[videoUploadIndex].RedScore.ToString());
+                    sb.AppendLine("Blue (Teams " + matchesList[videoUploadIndex].BlueAlliance + ") - " + matchesList[videoUploadIndex].BlueScore.ToString());
                     //sb.AppendLine("http://www.thebluealliance.com/match/" + Properties.Settings.Default.year.ToString() + evt.code.ToLower() + "_" + matchesList[videoUploadIndex].TbaDescription.ToLower());//TBA Link
                     sb.AppendLine("https://frc-events.firstinspires.org/" + Properties.Settings.Default.year.ToString() + "/" + evt.code.ToUpper() + "/" + matchesList[videoUploadIndex].Level + "/" + matchesList[videoUploadIndex].MatchNumber);//FIRST Link
                     sb.AppendLine();
-                    sb.AppendLine("Uploaded by FRC Video Splitter (https://github.com/tytremblay/FRC-Video-Splitter-2)");
+                    sb.AppendLine("Uploaded by FRC Video Splitter");
                     String videoDesc = sb.ToString();
 
                     int vidChunks = Convert.ToInt32(new FileInfo(matchesList[videoUploadIndex].VideoPath).Length);
@@ -1340,37 +1436,41 @@ namespace FRCVideoSplitter2
                 progress.SetText("Canceled");
                 Console.WriteLine("Worker Sucessfully Cancelled");
             }
-            Console.WriteLine("Worker Completed");
-            progress.Close();
-
-            foreach (SplitterTypes.Match m in matchesList)
+            else
             {
-                string importFilePath = Path.Combine(matchVideoDestinationPathTextBox.Text, eventsComboBox.Text + ".csv");
+                Console.WriteLine("Worker Completed");
+                progress.Close();
 
-                if (!File.Exists(importFilePath))
+                foreach (SplitterTypes.Match m in matchesList)
                 {
-                    using (StreamWriter sw = File.CreateText(importFilePath))
+                    string importFilePath = Path.Combine(matchVideoDestinationPathTextBox.Text, eventsComboBox.Text + ".csv");
+
+                    if (!File.Exists(importFilePath))
                     {
-                        foreach (SplitterTypes.SplitVideo vid in splitVideos)
+                        using (StreamWriter sw = File.CreateText(importFilePath))
                         {
-                            sw.WriteLine(vid.ToString());
+                            foreach (SplitterTypes.SplitVideo vid in splitVideos)
+                            {
+                                sw.WriteLine(vid.ToString());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        File.Delete(importFilePath);
+                        using (StreamWriter sw = File.CreateText(importFilePath))
+                        {
+                            foreach (SplitterTypes.SplitVideo vid in splitVideos)
+                            {
+                                sw.WriteLine(vid.ToString());
+                            }
                         }
                     }
                 }
-                else
-                {
-                    File.Delete(importFilePath);
-                    using (StreamWriter sw = File.CreateText(importFilePath))
-                    {
-                        foreach (SplitterTypes.SplitVideo vid in splitVideos)
-                        {
-                            sw.WriteLine(vid.ToString());
-                        }
-                    }
-                }
+
+                MessageBox.Show("Videos uploaded Successfully.  Created a private playlist on the channel.");
+                writeEventFileToDisk();
             }
-
-            MessageBox.Show("Videos uploaded Successfully.  Created a private playlist on the channel.");
         }
 
         // ################# MATCH DATA GRID ################# \\
@@ -1583,6 +1683,6 @@ namespace FRCVideoSplitter2
                 matchesList.First(i => i.FIRSTDescription == sVid.match).YouTubeId = sVid.youTube;
                 matchesList.First(i => i.FIRSTDescription == sVid.match).Include = true;
             }
-        }
+        }        
     }
 }

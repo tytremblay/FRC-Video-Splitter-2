@@ -32,6 +32,7 @@ namespace FRCVideoSplitter2
             private string _youtubeId;
             private string _level;
             private int _matchNumber;
+            private bool _reportedToTba;
 
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -173,6 +174,16 @@ namespace FRCVideoSplitter2
                 }
             }
 
+            public bool ReportedToTBA
+            {
+                get { return _reportedToTba; }
+                set
+                {
+                    _reportedToTba = value;
+                    this.NotifyPropertyChanged("ReportedToTBA");
+                }
+            }
+
             public Match(FRCApi.MatchResult frcMatch)
             {
                 this.Include = true;
@@ -214,12 +225,28 @@ namespace FRCVideoSplitter2
                 if (frcMatch.description.StartsWith("Qualification "))
                 {
                     this.FIRSTDescription = "Qual " + frcMatch.description.Substring(14);
-                }               
-                else 
-                {
-                    this.FIRSTDescription = frcMatch.description;
                 }
-                
+                else
+                {
+                    //playoffs
+                    if (frcMatch.matchNumber >= 9 && frcMatch.matchNumber <= 12)
+                    {
+                        this.FIRSTDescription = "Quarterfinal " + frcMatch.description;
+                    }
+                    else if (frcMatch.matchNumber >= 17 && frcMatch.matchNumber <= 18)
+                    {
+                        this.FIRSTDescription = "Semifinal " + frcMatch.description;
+                    }
+                    else if (frcMatch.matchNumber == 21 && Properties.Settings.Default.year == 2016)//only need to add for this season
+                    {
+                        this.FIRSTDescription = "Final " + frcMatch.description;
+                    }
+                    else
+                    {
+                        this.FIRSTDescription = frcMatch.description;
+                    }
+                }
+
                 this.RedAlliance = String.Join(", ", frcMatch.teams.Where(team => team.station.StartsWith("Red")).Select(n => n.teamNumber.ToString()).ToList());
                 this.BlueAlliance = String.Join(", ", frcMatch.teams.Where(team => team.station.StartsWith("Blue")).Select(n => n.teamNumber.ToString()).ToList());
 
@@ -284,8 +311,5 @@ namespace FRCVideoSplitter2
                 return eventCode + "," + match + "," + path + "," + youTube;
             }
         }
-
-
     }
-    
 }

@@ -81,6 +81,11 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.tbaSecret = new System.Windows.Forms.TextBox();
+            this.tbaAuthId = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.notifyTbaButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.matchesDataGridView)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -246,7 +251,7 @@
             this.matchesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.matchesDataGridView.Location = new System.Drawing.Point(410, 33);
             this.matchesDataGridView.Name = "matchesDataGridView";
-            this.matchesDataGridView.Size = new System.Drawing.Size(970, 631);
+            this.matchesDataGridView.Size = new System.Drawing.Size(970, 699);
             this.matchesDataGridView.TabIndex = 9;
             this.matchesDataGridView.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.matchesDataGridView_CellMouseDown);
             this.matchesDataGridView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.matchesDataGridView_CellMouseUp);
@@ -341,7 +346,7 @@
             this.splitVideosButton.BackColor = System.Drawing.Color.LimeGreen;
             this.splitVideosButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.splitVideosButton.ForeColor = System.Drawing.Color.White;
-            this.splitVideosButton.Location = new System.Drawing.Point(12, 415);
+            this.splitVideosButton.Location = new System.Drawing.Point(12, 450);
             this.splitVideosButton.Name = "splitVideosButton";
             this.splitVideosButton.Size = new System.Drawing.Size(390, 34);
             this.splitVideosButton.TabIndex = 18;
@@ -351,12 +356,16 @@
             // 
             // uploadToYouTubeButton
             // 
-            this.uploadToYouTubeButton.Location = new System.Drawing.Point(12, 455);
+            this.uploadToYouTubeButton.BackColor = System.Drawing.Color.DodgerBlue;
+            this.uploadToYouTubeButton.Cursor = System.Windows.Forms.Cursors.Default;
+            this.uploadToYouTubeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uploadToYouTubeButton.ForeColor = System.Drawing.Color.White;
+            this.uploadToYouTubeButton.Location = new System.Drawing.Point(12, 490);
             this.uploadToYouTubeButton.Name = "uploadToYouTubeButton";
             this.uploadToYouTubeButton.Size = new System.Drawing.Size(390, 34);
             this.uploadToYouTubeButton.TabIndex = 18;
             this.uploadToYouTubeButton.Text = "Upload Included Videos To YouTube";
-            this.uploadToYouTubeButton.UseVisualStyleBackColor = true;
+            this.uploadToYouTubeButton.UseVisualStyleBackColor = false;
             this.uploadToYouTubeButton.Click += new System.EventHandler(this.uploadToYouTubeButton_Click);
             // 
             // backgroundWorker1
@@ -367,7 +376,7 @@
             // 
             // tbaSpreadsheetButton
             // 
-            this.tbaSpreadsheetButton.Location = new System.Drawing.Point(12, 495);
+            this.tbaSpreadsheetButton.Location = new System.Drawing.Point(12, 598);
             this.tbaSpreadsheetButton.Name = "tbaSpreadsheetButton";
             this.tbaSpreadsheetButton.Size = new System.Drawing.Size(390, 34);
             this.tbaSpreadsheetButton.TabIndex = 18;
@@ -378,7 +387,7 @@
             // saveScoreDetailsButton
             // 
             this.saveScoreDetailsButton.Enabled = false;
-            this.saveScoreDetailsButton.Location = new System.Drawing.Point(14, 590);
+            this.saveScoreDetailsButton.Location = new System.Drawing.Point(14, 659);
             this.saveScoreDetailsButton.Name = "saveScoreDetailsButton";
             this.saveScoreDetailsButton.Size = new System.Drawing.Size(390, 34);
             this.saveScoreDetailsButton.TabIndex = 18;
@@ -389,7 +398,7 @@
             // getAllTheDataButton
             // 
             this.getAllTheDataButton.Enabled = false;
-            this.getAllTheDataButton.Location = new System.Drawing.Point(14, 630);
+            this.getAllTheDataButton.Location = new System.Drawing.Point(14, 699);
             this.getAllTheDataButton.Name = "getAllTheDataButton";
             this.getAllTheDataButton.Size = new System.Drawing.Size(390, 34);
             this.getAllTheDataButton.TabIndex = 18;
@@ -589,21 +598,73 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.button2);
+            this.groupBox4.Controls.Add(this.tbaSecret);
+            this.groupBox4.Controls.Add(this.tbaAuthId);
+            this.groupBox4.Controls.Add(this.label9);
             this.groupBox4.Controls.Add(this.matchVideoDestinationPathTextBox);
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Controls.Add(this.matchVideoBrowseButton);
             this.groupBox4.Location = new System.Drawing.Point(14, 344);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(390, 51);
+            this.groupBox4.Size = new System.Drawing.Size(390, 100);
             this.groupBox4.TabIndex = 22;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Output Options";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(284, 58);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 20;
+            this.button2.Text = "Clear";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.notifyTbaClear_Click);
+            // 
+            // tbaSecret
+            // 
+            this.tbaSecret.Location = new System.Drawing.Point(80, 72);
+            this.tbaSecret.Name = "tbaSecret";
+            this.tbaSecret.Size = new System.Drawing.Size(198, 20);
+            this.tbaSecret.TabIndex = 19;
+            this.tbaSecret.Text = "Secret";
+            this.tbaSecret.TextChanged += new System.EventHandler(this.tbaAuthSecret_Changed);
+            // 
+            // tbaAuthId
+            // 
+            this.tbaAuthId.Location = new System.Drawing.Point(80, 46);
+            this.tbaAuthId.Name = "tbaAuthId";
+            this.tbaAuthId.Size = new System.Drawing.Size(198, 20);
+            this.tbaAuthId.TabIndex = 18;
+            this.tbaAuthId.Text = "Auth ID";
+            this.tbaAuthId.TextChanged += new System.EventHandler(this.tbaAuthId_Changed);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(14, 49);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(64, 13);
+            this.label9.TabIndex = 17;
+            this.label9.Text = "Notify TBA?";
+            // 
+            // notifyTbaButton
+            // 
+            this.notifyTbaButton.Location = new System.Drawing.Point(13, 557);
+            this.notifyTbaButton.Name = "notifyTbaButton";
+            this.notifyTbaButton.Size = new System.Drawing.Size(390, 34);
+            this.notifyTbaButton.TabIndex = 23;
+            this.notifyTbaButton.Text = "Notify TBA of Uploaded Videos";
+            this.notifyTbaButton.UseVisualStyleBackColor = true;
+            this.notifyTbaButton.Click += new System.EventHandler(this.notifyTba_Clicked);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1392, 677);
+            this.ClientSize = new System.Drawing.Size(1392, 745);
+            this.Controls.Add(this.notifyTbaButton);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -691,6 +752,11 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button outroBrowseButton;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox tbaSecret;
+        private System.Windows.Forms.TextBox tbaAuthId;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button notifyTbaButton;
     }
 }
 

@@ -202,5 +202,65 @@ namespace FRCVideoSplitter2.Properties {
                 this["year"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string frcApiToken {
+            get {
+                return ((string)(this["frcApiToken"]));
+            }
+            set {
+                this["frcApiToken"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string tbaApiKey {
+            get {
+                return ((string)(this["tbaApiKey"]));
+            }
+            set {
+                this["tbaApiKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool uploadYoutubeAsPrivate {
+            get {
+                return ((bool)(this["uploadYoutubeAsPrivate"]));
+            }
+            set {
+                this["uploadYoutubeAsPrivate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string tbaAuthId {
+            get {
+                return ((string)(this["tbaAuthId"]));
+            }
+            set {
+                this["tbaAuthId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string tbaAuthSecret {
+            get {
+                return ((string)(this["tbaAuthSecret"]));
+            }
+            set {
+                this["tbaAuthSecret"] = value;
+            }
+        }
     }
 }

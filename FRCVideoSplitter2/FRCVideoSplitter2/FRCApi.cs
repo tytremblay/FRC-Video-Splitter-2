@@ -7,15 +7,13 @@ using Newtonsoft.Json;
 using System.Reflection;
 using System.Net;
 using System.IO;
+using System.Windows.Forms;
 
 namespace FRCVideoSplitter2
 {
     class FRCApi
     {
         private string baseUrl = "https://frc-api.firstinspires.org/v2.0";
-        
-        //private string apiToken = "user:token";
-
         public static string QualificationMatchesString = "qualification";
         public static string PlayoffMatchesString = "playoff";
         private Dictionary<string, DateTime> requestTimesDict = new Dictionary<string, DateTime>();
@@ -96,7 +94,7 @@ namespace FRCVideoSplitter2
             }
             catch (WebException ex)
             {
-                if (((HttpWebResponse)((WebException)ex.InnerException).Response).StatusCode == HttpStatusCode.NotModified)
+                if (((HttpWebResponse)(ex).Response).StatusCode == HttpStatusCode.NotModified)
                 {
                     //no changes were made, so load from cache
                     try
@@ -160,14 +158,22 @@ namespace FRCVideoSplitter2
         public List<T> getMatchResults<T>(int season, string eventKey, bool useIfModifiedSince = true)
         {
             string uri = baseUrl + "/" + season.ToString() + "/matches/" + eventKey;
-            MatchResultsList<T> results = handleAPIRequest<MatchResultsList<T>>(uri, useIfModifiedSince);
-            if (results != null)
+            try
             {
-                return results.Matches;
+                MatchResultsList<T> results = handleAPIRequest<MatchResultsList<T>>(uri, useIfModifiedSince);
+                if (results != null)
+                {
+                    return results.Matches;
+                }
+                else
+                {
+                    return default(List<T>);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return default(List<T>);
+                MessageBox.Show("The API Operation failed with the following details:\n\n" + ex.ToString());
+                return new List<T>();
             }
             /*
             try
@@ -883,14 +889,8 @@ namespace FRCVideoSplitter2
         {
             var request = System.Net.WebRequest.Create(uri) as System.Net.HttpWebRequest;
             request.KeepAlive = true;
-
-            ///REMOVE AFTER FRC FIXES IT?
-            //request.ServerCertificateValidationCallback += (o, c, ch, er) => true;
-
-            string token = apiToken;
-
+            string token = Properties.Settings.Default.frcApiToken;
             string encodedToken = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(token));
-
             request.Headers.Add("Authorization: Basic " + encodedToken);
 
             if (useIfModifiedSince)
@@ -935,7 +935,7 @@ namespace FRCVideoSplitter2
                 if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotModified)
                 {
                     //no changes have been made
-                    throw new WebException("API Not Modified", ex);
+                    throw;
                 }
                 if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.Unauthorized)
                 {

@@ -160,8 +160,13 @@ C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSpli
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\Interop.WMPLib.dll
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\AxInterop.WMPLib.dll
 C:\Users\Ty\Documents\GitHub\FRC-Video-Splitter-2\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.Form2.resources
-C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\ffmpeg.exe
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.exe.config
+C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csproj.App.config
+C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\Interop.WMPLib.dll
+C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\AxInterop.WMPLib.dll
+C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csproj.ResolveComReference.cache
+C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FreeSerif.ttf
+C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\ffmpeg.exe
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.exe.manifest
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.application
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FRCVideoSplitter2.exe
@@ -203,10 +208,6 @@ C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitte
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\Zlib.Portable.xml
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\Interop.WMPLib.dll
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\AxInterop.WMPLib.dll
-C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csproj.App.config
-C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\Interop.WMPLib.dll
-C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\AxInterop.WMPLib.dll
-C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csproj.ResolveComReference.cache
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.Form1.resources
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.Form2.resources
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.ProgressDialog.resources
@@ -217,5 +218,4 @@ C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitte
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.application
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.exe
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.pdb
-C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\bin\Debug\FreeSerif.ttf
 C:\Users\Alex\Documents\Projects\FRCVideoSplit\FRCVideoSplitter2\FRCVideoSplitter2\obj\Debug\FRCVideoSplitter2.csprojResolveAssemblyReference.cache

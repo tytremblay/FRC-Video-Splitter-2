@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace FRCVideoSplitter2
@@ -41,15 +42,25 @@ namespace FRCVideoSplitter2
             this.yearBox.Text = Properties.Settings.Default.year.ToString();
             this.matchLengthBox.Text = Properties.Settings.Default.matchLength;
             this.endOfVideoPaddingBox.Text = Properties.Settings.Default.endOfVideoPadTime;
+            this.frcApiToken.Text = Properties.Settings.Default.frcApiToken;
+            this.tbaAuthKey.Text = Properties.Settings.Default.tbaApiKey;
             this.useScoreDisplayedTimeCheckbox.Checked = Properties.Settings.Default.useScoreDisplayedTime;
+            this.youtubePrivate.Checked = Properties.Settings.Default.uploadYoutubeAsPrivate;
         }
 
         private void saveButton_Click(object sender, EventArgs e)
         {
+            Properties.Settings.Default.tbaApiKey = tbaAuthKey.Text;
+            if (Properties.Settings.Default.frcApiToken != frcApiToken.Text)
+            {
+                File.Delete("requestTimes.bin");//delete requests, so we restart fresh without cache
+                Properties.Settings.Default.frcApiToken = frcApiToken.Text;
+            }
             Properties.Settings.Default.matchLength = matchLengthBox.Text;
             Properties.Settings.Default.endOfVideoPadTime = endOfVideoPaddingBox.Text;
             Properties.Settings.Default.Save();
             Properties.Settings.Default.useScoreDisplayedTime = this.useScoreDisplayedTimeCheckbox.Checked;
+            Properties.Settings.Default.uploadYoutubeAsPrivate = this.youtubePrivate.Checked;
             this.Close();
         }
 
