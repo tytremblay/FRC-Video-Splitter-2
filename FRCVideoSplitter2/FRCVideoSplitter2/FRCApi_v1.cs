@@ -143,9 +143,7 @@ namespace FRCVideoSplitter2
                 var request = System.Net.WebRequest.Create(uri) as System.Net.HttpWebRequest;
                 request.KeepAlive = true;
 
-                string token = "TYTREMBLAY:C272D991-944E-49D7-B10E-27BA5EBB598B";
-
-                string encodedToken = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(token));
+                string encodedToken = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("YOURTOKEN"));
 
                 request.Headers.Add("Authorization: Basic " + encodedToken);
 

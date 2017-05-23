@@ -37,18 +37,6 @@ namespace FRCVideoSplitter2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2016")]
-        public int year {
-            get {
-                return ((int)(this["year"]));
-            }
-            set {
-                this["year"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string eventCode {
             get {
@@ -164,6 +152,114 @@ namespace FRCVideoSplitter2.Properties {
             }
             set {
                 this["endOfVideoPadTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Click Browse to Use...")]
+        public string titleCardLocation {
+            get {
+                return ((string)(this["titleCardLocation"]));
+            }
+            set {
+                this["titleCardLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Click Browse to Use...")]
+        public string watermarkLocation {
+            get {
+                return ((string)(this["watermarkLocation"]));
+            }
+            set {
+                this["watermarkLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Click Browse to Use...")]
+        public string outroLocation {
+            get {
+                return ((string)(this["outroLocation"]));
+            }
+            set {
+                this["outroLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2017")]
+        public int year {
+            get {
+                return ((int)(this["year"]));
+            }
+            set {
+                this["year"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string frcApiToken {
+            get {
+                return ((string)(this["frcApiToken"]));
+            }
+            set {
+                this["frcApiToken"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string tbaApiKey {
+            get {
+                return ((string)(this["tbaApiKey"]));
+            }
+            set {
+                this["tbaApiKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool uploadYoutubeAsPrivate {
+            get {
+                return ((bool)(this["uploadYoutubeAsPrivate"]));
+            }
+            set {
+                this["uploadYoutubeAsPrivate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string tbaAuthId {
+            get {
+                return ((string)(this["tbaAuthId"]));
+            }
+            set {
+                this["tbaAuthId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string tbaAuthSecret {
+            get {
+                return ((string)(this["tbaAuthSecret"]));
+            }
+            set {
+                this["tbaAuthSecret"] = value;
             }
         }
     }

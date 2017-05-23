@@ -192,6 +192,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="client_secrets.json" />
     <None Include="FRCVideoSplitter2_TemporaryKey.pfx" />
+    <Content Include="FreeSerif.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

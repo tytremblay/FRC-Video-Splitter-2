@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 
 namespace FRCVideoSplitter2
@@ -21,25 +15,17 @@ namespace FRCVideoSplitter2
         /// <summary>
         /// Pull the events list from FRC for the given year.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void RefreshFRCDataButton_Click(object sender, EventArgs e)
         {
             string events = api.getEventsListJsonString(Properties.Settings.Default.year);
-
             Properties.Settings.Default.eventsJsonString = events;
-
             Properties.Settings.Default.Save();
-
             MessageBox.Show("Data successfully refreshed.");
-            
         }
 
         /// <summary>
         /// Save the year if they change it
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void yearBox_TextChanged(object sender, EventArgs e)
         {
             //if they've entered 4 digits
@@ -56,15 +42,25 @@ namespace FRCVideoSplitter2
             this.yearBox.Text = Properties.Settings.Default.year.ToString();
             this.matchLengthBox.Text = Properties.Settings.Default.matchLength;
             this.endOfVideoPaddingBox.Text = Properties.Settings.Default.endOfVideoPadTime;
+            this.frcApiToken.Text = Properties.Settings.Default.frcApiToken;
+            this.tbaAuthKey.Text = Properties.Settings.Default.tbaApiKey;
             this.useScoreDisplayedTimeCheckbox.Checked = Properties.Settings.Default.useScoreDisplayedTime;
+            this.youtubePrivate.Checked = Properties.Settings.Default.uploadYoutubeAsPrivate;
         }
 
         private void saveButton_Click(object sender, EventArgs e)
         {
+            Properties.Settings.Default.tbaApiKey = tbaAuthKey.Text;
+            if (Properties.Settings.Default.frcApiToken != frcApiToken.Text)
+            {
+                File.Delete("requestTimes.bin");//delete requests, so we restart fresh without cache
+                Properties.Settings.Default.frcApiToken = frcApiToken.Text;
+            }
             Properties.Settings.Default.matchLength = matchLengthBox.Text;
             Properties.Settings.Default.endOfVideoPadTime = endOfVideoPaddingBox.Text;
             Properties.Settings.Default.Save();
             Properties.Settings.Default.useScoreDisplayedTime = this.useScoreDisplayedTimeCheckbox.Checked;
+            Properties.Settings.Default.uploadYoutubeAsPrivate = this.youtubePrivate.Checked;
             this.Close();
         }
 
@@ -72,7 +68,12 @@ namespace FRCVideoSplitter2
         {
             overrideHelperLabel.Enabled = !useScoreDisplayedTimeCheckbox.Checked;
             matchLengthBox.Enabled = !useScoreDisplayedTimeCheckbox.Checked;
+        }
 
+        private void ClearSettings_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Reset();
+            FRCApi.deleteRequestTimes();
         }
     }
 }
