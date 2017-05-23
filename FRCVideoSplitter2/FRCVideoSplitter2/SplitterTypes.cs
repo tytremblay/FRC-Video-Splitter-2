@@ -22,7 +22,8 @@ namespace FRCVideoSplitter2
             private DateTime _timeStamp;
             private DateTime _actualStartTime;
             private DateTime? _postResultTime;
-            private string _description;
+            private string _TbaDescription;
+            private string _FIRSTDescription;
             private string _redAlliance;
             private string _blueAlliance;
             private int _redScore;
@@ -31,6 +32,7 @@ namespace FRCVideoSplitter2
             private string _youtubeId;
             private string _level;
             private int _matchNumber;
+            private bool _reportedToTba;
 
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -73,13 +75,22 @@ namespace FRCVideoSplitter2
                     this.NotifyPropertyChanged("PostResultsTime");
                 }
             }
-            public string Description
+            public string FIRSTDescription
             {
-                get { return _description; }
+                get { return _FIRSTDescription; }
                 set
                 {
-                    _description = value;
-                    this.NotifyPropertyChanged("Description");
+                    _FIRSTDescription = value;
+                    this.NotifyPropertyChanged("FIRSTDescription");
+                }
+            }
+            public string TbaDescription
+            {
+                get { return _TbaDescription; }
+                set
+                {
+                    _TbaDescription = value;
+                    this.NotifyPropertyChanged("TbaDescription");
                 }
             }
 
@@ -163,62 +174,79 @@ namespace FRCVideoSplitter2
                 }
             }
 
+            public bool ReportedToTBA
+            {
+                get { return _reportedToTba; }
+                set
+                {
+                    _reportedToTba = value;
+                    this.NotifyPropertyChanged("ReportedToTBA");
+                }
+            }
+
             public Match(FRCApi.MatchResult frcMatch)
             {
                 this.Include = true;
                 this.TimeStamp = new DateTime();
                 this.ActualStartTime = frcMatch.actualStartTime;
                 this.PostResultTime = frcMatch.postResultTime;
-                Dictionary<int, string> matchKeys = new Dictionary<int, string>();
-                matchKeys.Add(1, "QF1M1");
-                matchKeys.Add(2, "QF2M1");
-                matchKeys.Add(3, "QF3M1");
-                matchKeys.Add(4, "QF4M1");
-                matchKeys.Add(5, "QF1M2");
-                matchKeys.Add(6, "QF2M2");
-                matchKeys.Add(7, "QF3M2");
-                matchKeys.Add(8, "QF4M2");
-                matchKeys.Add(9, "QF1M3");
-                matchKeys.Add(10, "QF2M3");
-                matchKeys.Add(11, "QF3M3");
-                matchKeys.Add(12, "QF4M3");
-                matchKeys.Add(13, "SF1M1");
-                matchKeys.Add(14, "SF2M1");
-                matchKeys.Add(15, "SF1M2");
-                matchKeys.Add(16, "SF2M2");
-                matchKeys.Add(17, "SF1M3");
-                matchKeys.Add(18, "SF2M3");
-                matchKeys.Add(19, "F1M1");
-                matchKeys.Add(20, "F1M2");
-                matchKeys.Add(21, "F1M3");
-                /*
-                if (frcMatch.description.StartsWith("Qualification "))
-                {
-                    this.Description = "Q" + frcMatch.description.Substring(14);
-                }
-                else if (frcMatch.description.StartsWith("Quarterfinal "))
-                {
-                    this.Description = "QF" + frcMatch.description.Substring(13);
-                }
-                else if (frcMatch.description.StartsWith("Semifinal "))
-                {
-                    this.Description = "SF" + frcMatch.description.Substring(10);
-                }
-                else 
-                {
-                    this.Description = frcMatch.description;
-                }
-                 * */
-
+                Dictionary<int, string> TBAmatchKeys = new Dictionary<int, string>();
+                TBAmatchKeys.Add(1, "QF1M1");
+                TBAmatchKeys.Add(2, "QF2M1");
+                TBAmatchKeys.Add(3, "QF3M1");
+                TBAmatchKeys.Add(4, "QF4M1");
+                TBAmatchKeys.Add(5, "QF1M2");
+                TBAmatchKeys.Add(6, "QF2M2");
+                TBAmatchKeys.Add(7, "QF3M2");
+                TBAmatchKeys.Add(8, "QF4M2");
+                TBAmatchKeys.Add(9, "QF1M3");
+                TBAmatchKeys.Add(10, "QF2M3");
+                TBAmatchKeys.Add(11, "QF3M3");
+                TBAmatchKeys.Add(12, "QF4M3");
+                TBAmatchKeys.Add(13, "SF1M1");
+                TBAmatchKeys.Add(14, "SF2M1");
+                TBAmatchKeys.Add(15, "SF1M2");
+                TBAmatchKeys.Add(16, "SF2M2");
+                TBAmatchKeys.Add(17, "SF1M3");
+                TBAmatchKeys.Add(18, "SF2M3");
+                TBAmatchKeys.Add(19, "F1M1");
+                TBAmatchKeys.Add(20, "F1M2");
+                TBAmatchKeys.Add(21, "F1M3");
                 if (frcMatch.tournamentLevel == "Qualification")
                 {
-                    this.Description = "QM" + frcMatch.matchNumber;
+                    this.TbaDescription = "QM" + frcMatch.matchNumber;
                 }
                 else
                 {
-                    this.Description = matchKeys[frcMatch.matchNumber];
+                    this.TbaDescription = TBAmatchKeys[frcMatch.matchNumber];
                 }
-                //this.Description = frcMatch.description;
+
+
+                if (frcMatch.description.StartsWith("Qualification "))
+                {
+                    this.FIRSTDescription = "Qual " + frcMatch.description.Substring(14);
+                }
+                else
+                {
+                    //playoffs
+                    if (frcMatch.matchNumber >= 9 && frcMatch.matchNumber <= 12)
+                    {
+                        this.FIRSTDescription = "Quarterfinal " + frcMatch.description;
+                    }
+                    else if (frcMatch.matchNumber >= 17 && frcMatch.matchNumber <= 18)
+                    {
+                        this.FIRSTDescription = "Semifinal " + frcMatch.description;
+                    }
+                    else if (frcMatch.matchNumber == 21 && Properties.Settings.Default.year == 2016)//only need to add for this season
+                    {
+                        this.FIRSTDescription = "Final " + frcMatch.description;
+                    }
+                    else
+                    {
+                        this.FIRSTDescription = frcMatch.description;
+                    }
+                }
+
                 this.RedAlliance = String.Join(", ", frcMatch.teams.Where(team => team.station.StartsWith("Red")).Select(n => n.teamNumber.ToString()).ToList());
                 this.BlueAlliance = String.Join(", ", frcMatch.teams.Where(team => team.station.StartsWith("Blue")).Select(n => n.teamNumber.ToString()).ToList());
 
@@ -283,8 +311,5 @@ namespace FRCVideoSplitter2
                 return eventCode + "," + match + "," + path + "," + youTube;
             }
         }
-
-
     }
-    
 }
