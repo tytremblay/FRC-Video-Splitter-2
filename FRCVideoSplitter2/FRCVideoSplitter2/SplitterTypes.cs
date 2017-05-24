@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
 
 namespace FRCVideoSplitter2
 {
@@ -33,6 +29,7 @@ namespace FRCVideoSplitter2
             private string _level;
             private int _matchNumber;
             private bool _reportedToTba;
+            private bool _reportedToFIRST;
 
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -181,6 +178,16 @@ namespace FRCVideoSplitter2
                 {
                     _reportedToTba = value;
                     this.NotifyPropertyChanged("ReportedToTBA");
+                }
+            }
+
+            public bool ReportedToFIRST
+            {
+                get { return _reportedToFIRST; }
+                set
+                {
+                    _reportedToFIRST = value;
+                    this.NotifyPropertyChanged("ReportedToFIRST");
                 }
             }
 

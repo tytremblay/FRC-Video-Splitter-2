@@ -655,7 +655,7 @@
             this.notifyTbaButton.Name = "notifyTbaButton";
             this.notifyTbaButton.Size = new System.Drawing.Size(390, 34);
             this.notifyTbaButton.TabIndex = 23;
-            this.notifyTbaButton.Text = "Notify TBA of Uploaded Videos";
+            this.notifyTbaButton.Text = "Notify TBA/FIRST of Uploaded Videos";
             this.notifyTbaButton.UseVisualStyleBackColor = true;
             this.notifyTbaButton.Click += new System.EventHandler(this.notifyTba_Clicked);
             // 

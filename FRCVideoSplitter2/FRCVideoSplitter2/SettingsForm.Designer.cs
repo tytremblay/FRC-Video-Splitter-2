@@ -43,6 +43,7 @@
             this.tbaAuthKey = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.youtubePrivate = new System.Windows.Forms.CheckBox();
+            this.uploadsToFIRST = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // RefreshFRCDataButton
@@ -187,11 +188,22 @@
             this.youtubePrivate.Text = "Make Youtube Uploads Private";
             this.youtubePrivate.UseVisualStyleBackColor = true;
             // 
+            // uploadsToFIRST
+            // 
+            this.uploadsToFIRST.AutoSize = true;
+            this.uploadsToFIRST.Location = new System.Drawing.Point(11, 187);
+            this.uploadsToFIRST.Name = "uploadsToFIRST";
+            this.uploadsToFIRST.Size = new System.Drawing.Size(241, 17);
+            this.uploadsToFIRST.TabIndex = 15;
+            this.uploadsToFIRST.Text = "Report Uploads to FIRST HQ (Requires Auth)";
+            this.uploadsToFIRST.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(582, 496);
+            this.Controls.Add(this.uploadsToFIRST);
             this.Controls.Add(this.youtubePrivate);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.tbaAuthKey);
@@ -232,5 +244,6 @@
         private System.Windows.Forms.TextBox tbaAuthKey;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox youtubePrivate;
+        private System.Windows.Forms.CheckBox uploadsToFIRST;
     }
 }

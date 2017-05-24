@@ -262,5 +262,17 @@ namespace FRCVideoSplitter2.Properties {
                 this["tbaAuthSecret"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool uploadsToFIRST {
+            get {
+                return ((bool)(this["uploadsToFIRST"]));
+            }
+            set {
+                this["uploadsToFIRST"] = value;
+            }
+        }
     }
 }
