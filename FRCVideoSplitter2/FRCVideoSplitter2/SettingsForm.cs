@@ -77,5 +77,20 @@ namespace FRCVideoSplitter2
             Properties.Settings.Default.Reset();
             FRCApi.deleteRequestTimes();
         }
+
+        private void youtubeLogout_Click(object sender, EventArgs e)
+        {
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string fullFilePath = Path.Combine(appData, "FRCVideoSplitter2.YouTubeApi+VideoUploader", "Google.Apis.Auth.OAuth2.Responses.TokenResponse-user");
+            if (File.Exists(fullFilePath))
+            {
+                File.Delete(fullFilePath);
+                MessageBox.Show("Logged Out");
+            }
+            else
+            {
+                MessageBox.Show("Unable to Find Original Auth (cannot log out)");
+            }
+        }
     }
 }

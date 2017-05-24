@@ -44,6 +44,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.youtubePrivate = new System.Windows.Forms.CheckBox();
             this.uploadsToFIRST = new System.Windows.Forms.CheckBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // RefreshFRCDataButton
@@ -198,11 +199,22 @@
             this.uploadsToFIRST.Text = "Report Uploads to FIRST HQ (Requires Auth)";
             this.uploadsToFIRST.UseVisualStyleBackColor = true;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(11, 385);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(165, 23);
+            this.button2.TabIndex = 16;
+            this.button2.Text = "Logout of Youtube";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.youtubeLogout_Click);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(582, 496);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.uploadsToFIRST);
             this.Controls.Add(this.youtubePrivate);
             this.Controls.Add(this.label4);
@@ -245,5 +257,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox youtubePrivate;
         private System.Windows.Forms.CheckBox uploadsToFIRST;
+        private System.Windows.Forms.Button button2;
     }
 }
