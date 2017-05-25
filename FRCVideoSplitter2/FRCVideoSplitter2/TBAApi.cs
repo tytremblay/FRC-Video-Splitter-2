@@ -43,6 +43,7 @@ namespace FRCVideoSplitter2
             var RequestUriParsed = new Uri(url);
             string source2Hash = tbaSecret + RequestUriParsed.AbsolutePath + body;//X-TBA-Auth-Sig: md5_hexdigest(<secret><request_path_no_domain><request_body>) << target format
             string resultHash = GetMd5Hash(source2Hash);
+            client.DefaultRequestHeaders.Clear();//reset them for this attempt
             client.DefaultRequestHeaders.Add("X-TBA-Auth-Id", tbaAuth);
             client.DefaultRequestHeaders.Add("X-TBA-Auth-Sig", resultHash);
 
