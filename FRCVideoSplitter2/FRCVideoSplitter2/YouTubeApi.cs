@@ -202,7 +202,6 @@ namespace FRCVideoSplitter2
                 {
                     video.Status.PrivacyStatus = "public"; // or "private" or "public"
                 }
-                video.Status.Embeddable = false;//don't allow embedding
                 video.Status.PublicStatsViewable = false;
                 var filePath = path;
 
