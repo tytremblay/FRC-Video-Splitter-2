@@ -31,6 +31,7 @@ namespace FRCVideoSplitter2
             //eventCode = "arc";
             //tbaEndpointTrusted = "http://tba.lopreiato.me/api/trusted/v1";
             ///////////
+            eventCode = TbaRealEventCode(eventCode);//some event codes differ because TBA has legacy stuff
             string url = String.Format("{0}/event/{1}/match_videos/add", tbaEndpointTrusted, Properties.Settings.Default.year + eventCode.ToLower());
             string body = @"{""" + matchTbaCode.ToLower() + @""":""" + youtubeUrlKey + @"""}";//we have to do a dumb custom format thing because TBA has dunamically changing key:value naming
             bool result = await writeTbaOperatonTrusted(tbaAuth, tbaSecret, url, body);
@@ -42,6 +43,7 @@ namespace FRCVideoSplitter2
             var RequestUriParsed = new Uri(url);
             string source2Hash = tbaSecret + RequestUriParsed.AbsolutePath + body;//X-TBA-Auth-Sig: md5_hexdigest(<secret><request_path_no_domain><request_body>) << target format
             string resultHash = GetMd5Hash(source2Hash);
+            client.DefaultRequestHeaders.Clear();//reset them for this attempt
             client.DefaultRequestHeaders.Add("X-TBA-Auth-Id", tbaAuth);
             client.DefaultRequestHeaders.Add("X-TBA-Auth-Sig", resultHash);
 
@@ -67,7 +69,37 @@ namespace FRCVideoSplitter2
             }
             return sBuilder.ToString();
         }
-
+        private string TbaRealEventCode(string eventCode)
+        {
+            switch (eventCode.ToLower())
+            {
+                case "archimedes":
+                    return "arc";
+                case "carson":
+                    return "cars";
+                case "carver":
+                    return "carv";
+                case "curie":
+                    return "cur";
+                case "daly":
+                    return "dal";
+                case "darwin":
+                    return "dar";
+                case "galileo":
+                    return "gal";
+                case "hopper":
+                    return "hop";
+                case "newton":
+                    return "new";
+                case "roebling":
+                    return "roe";
+                case "tesla":
+                    return "tes";
+                case "turing":
+                    return "tur";
+            }
+            return eventCode;
+        }
         // ################# READ API ################# \\
         /// <summary>
         /// Returns a string fetched from the TBA API at the specified url

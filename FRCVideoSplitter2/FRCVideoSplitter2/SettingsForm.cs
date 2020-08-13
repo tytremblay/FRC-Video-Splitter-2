@@ -46,6 +46,7 @@ namespace FRCVideoSplitter2
             this.tbaAuthKey.Text = Properties.Settings.Default.tbaApiKey;
             this.useScoreDisplayedTimeCheckbox.Checked = Properties.Settings.Default.useScoreDisplayedTime;
             this.youtubePrivate.Checked = Properties.Settings.Default.uploadYoutubeAsPrivate;
+            this.uploadsToFIRST.Checked = Properties.Settings.Default.uploadsToFIRST;
         }
 
         private void saveButton_Click(object sender, EventArgs e)
@@ -61,6 +62,7 @@ namespace FRCVideoSplitter2
             Properties.Settings.Default.Save();
             Properties.Settings.Default.useScoreDisplayedTime = this.useScoreDisplayedTimeCheckbox.Checked;
             Properties.Settings.Default.uploadYoutubeAsPrivate = this.youtubePrivate.Checked;
+            Properties.Settings.Default.uploadsToFIRST = this.uploadsToFIRST.Checked;
             this.Close();
         }
 
@@ -74,6 +76,21 @@ namespace FRCVideoSplitter2
         {
             Properties.Settings.Default.Reset();
             FRCApi.deleteRequestTimes();
+        }
+
+        private void youtubeLogout_Click(object sender, EventArgs e)
+        {
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string fullFilePath = Path.Combine(appData, "FRCVideoSplitter2.YouTubeApi+VideoUploader", "Google.Apis.Auth.OAuth2.Responses.TokenResponse-user");
+            if (File.Exists(fullFilePath))
+            {
+                File.Delete(fullFilePath);
+                MessageBox.Show("Logged Out");
+            }
+            else
+            {
+                MessageBox.Show("Unable to Find Original Auth (cannot log out)");
+            }
         }
     }
 }

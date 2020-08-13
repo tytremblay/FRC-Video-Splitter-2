@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Net;
 using System.IO;
 using System.Windows.Forms;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace FRCVideoSplitter2
 {
@@ -59,7 +61,6 @@ namespace FRCVideoSplitter2
                 Console.WriteLine(e.Message);
             }
         }
-
 
         /// <summary>
         /// Generic API request for generic objects
@@ -248,8 +249,6 @@ namespace FRCVideoSplitter2
              * */
         }
 
-
-
         /// <summary>
         /// Gets the raw JSON string for events lists from the FRC API
         /// </summary>
@@ -329,7 +328,6 @@ namespace FRCVideoSplitter2
                 return default(List<HybridScheduleMatch>);
             }
         }
-
 
         /// <summary>
         /// Gets the full rankings for an event
@@ -632,9 +630,9 @@ namespace FRCVideoSplitter2
             public override string ToString()
             {
                 StringBuilder sb = new StringBuilder();
-                
+
                 sb.AppendFormat("{0},{1},{2}", this.teamNumber, this.station, this.dq);
-                
+
                 return sb.ToString();
             }
         }
@@ -945,5 +943,50 @@ namespace FRCVideoSplitter2
 
             return null;
         }
+
+        ////////////////////////////////////////////// WRITE METHODS TO FRC API
+        [Serializable]
+        public class MatchVideoUploadModel
+        {
+            public string eventCode { get; set; }
+
+            public string tournamentLevel { get; set; }
+
+            public int matchNumber { get; set; }
+
+            public string videoLink { get; set; }
+        }
+
+        public async Task<bool> writeFIRSTMatchVideo(string eventCode, string tournamentLevel, int matchNumber, string youtubeUrlKey)
+        {
+            string url = String.Format("{0}/{1}/HQ/matchVideo", baseUrl, Properties.Settings.Default.year);
+            MatchVideoUploadModel postContent = new MatchVideoUploadModel();
+            postContent.eventCode = eventCode;
+            postContent.matchNumber = matchNumber;
+            postContent.tournamentLevel = tournamentLevel;
+            postContent.videoLink = "https://www.youtube.com/watch?v=" + youtubeUrlKey;//We want full address here, so add the base
+            
+            bool result = await writeFIRSTOperatonTrusted(url, JsonConvert.SerializeObject(postContent));
+            return result;
+        }
+        private static readonly HttpClient client = new HttpClient();
+        private async Task<bool> writeFIRSTOperatonTrusted(string url, string body)
+        {
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            string token = Properties.Settings.Default.frcApiToken;
+            string encodedToken = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(token));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", encodedToken);
+            var response = await client.PostAsync(url, content);
+            if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
+            {
+                return await Task.FromResult(true);
+            }
+            else
+            {
+                return await Task.FromResult(false);
+            }
+        }
+
+
     }
 }

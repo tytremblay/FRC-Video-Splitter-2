@@ -859,7 +859,7 @@ namespace FRCVideoSplitter2
             progress.SetText("Please Wait...");
             progress.Show();
             bool failures = false;
-            foreach(SplitterTypes.Match m in matchesList.Where(x => x.Include == true && x.ReportedToTBA == false)) //for each one we've uploaded, but not told TBA about
+            foreach (SplitterTypes.Match m in matchesList.Where(x => x.Include == true && x.ReportedToTBA == false)) //for each one we've uploaded, but not told TBA about
             {
                 bool tbaResult = await tbaApi.writeTbaMatchVideo(tbaAuthId.Text, tbaSecret.Text, eventCodeBox.Text, m.TbaDescription, m.YouTubeId);
                 if (tbaResult)
@@ -871,6 +871,22 @@ namespace FRCVideoSplitter2
                     failures = true;
                 }
             }
+            if (Properties.Settings.Default.uploadsToFIRST)
+            {
+                foreach (SplitterTypes.Match m in matchesList.Where(x => x.Include == true && x.ReportedToFIRST == false)) //for each one we've uploaded, but not told FIRST about
+                {
+                    bool firstResult = await api.writeFIRSTMatchVideo(eventCodeBox.Text, m.Level, m.MatchNumber, m.YouTubeId);
+                    if (firstResult)
+                    {
+                        m.ReportedToFIRST = true;
+                    }
+                    else
+                    {
+                        failures = true;
+                    }
+                }
+            }
+
             progress.Close();
             if (failures)
             {
@@ -1278,15 +1294,23 @@ namespace FRCVideoSplitter2
         /// </summary>
         private async void vid_UploadCompleted(object sender, string id)
         {
-            matchesList[videoUploadIndex].YouTubeId = id;
+            int indexJustCompleted = videoUploadIndex;//it can change after this, as it goes to the next video
+            matchesList[indexJustCompleted].YouTubeId = id;
             uploader.AddToPlaylist(currentPlaylistId, id);
-            //splitVideos.First(i => i.match == matchesList[videoUploadIndex].FIRSTDescription).youTube = id;            
             if (tbaAuthId.Text != "Auth ID") //try to tell blue alliance about the video
             {
-                bool tbaResult = await tbaApi.writeTbaMatchVideo(tbaAuthId.Text, tbaSecret.Text, eventCodeBox.Text, matchesList[videoUploadIndex].TbaDescription, id);
+                bool tbaResult = await tbaApi.writeTbaMatchVideo(tbaAuthId.Text, tbaSecret.Text, eventCodeBox.Text, matchesList[indexJustCompleted].TbaDescription, id);
                 if (tbaResult)
                 {
-                    matchesList[videoUploadIndex].ReportedToTBA = true;
+                    matchesList[indexJustCompleted].ReportedToTBA = true;
+                }
+            }
+            if (Properties.Settings.Default.uploadsToFIRST) //try to tell FIRST about the video
+            {
+                bool firstResult = await api.writeFIRSTMatchVideo(eventCodeBox.Text, matchesList[indexJustCompleted].Level, matchesList[indexJustCompleted].MatchNumber, matchesList[indexJustCompleted].YouTubeId);
+                if (firstResult)
+                {
+                    matchesList[indexJustCompleted].ReportedToFIRST = true;
                 }
             }
             writeEventFileToDisk();
@@ -1314,15 +1338,6 @@ namespace FRCVideoSplitter2
             BackgroundWorker worker = sender as BackgroundWorker;
             FRCApi.Event evt = eventsList.Find(i => i.name == Properties.Settings.Default.eventName);
             String playlistName = String.Format("{0}{1}{2}", Properties.Settings.Default.year.ToString(), " ", evt.name);
-
-            /*Build the description
-             * example:
-             * Event Description
-             * Reading High School, Reading, MA, USA
-             * 3/6/2015 - 3/8/2015
-             * http://www.thebluealliance.com/event/2015marea / https://frc-events.firstinspires.org/2017/MAREA
-             * Videos Prepared by FRC Video Splitter (https://github.com/tytremblay/FRC-Video-Splitter-2)"
-             */
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("FIRST Robotics Competition");
@@ -1410,6 +1425,7 @@ namespace FRCVideoSplitter2
                         foreach (var err in ex.InnerExceptions)
                         {
                             Console.WriteLine("Error: " + err.Message);
+                            throw;
                         }
                     }
                 }
@@ -1420,6 +1436,7 @@ namespace FRCVideoSplitter2
         /// </summary>
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            progress.Close();
             // First, handle the case where an exception was thrown. 
             if (e.Error != null)
             {
@@ -1433,7 +1450,6 @@ namespace FRCVideoSplitter2
                 // the DoWork event handler, the Cancelled 
                 // flag may not have been set, even though 
                 // CancelAsync was called.
-                progress.SetText("Canceled");
                 Console.WriteLine("Worker Sucessfully Cancelled");
             }
             else
@@ -1468,7 +1484,7 @@ namespace FRCVideoSplitter2
                     }
                 }
 
-                MessageBox.Show("Videos uploaded Successfully.  Created a private playlist on the channel.");
+                MessageBox.Show("Videos uploaded Successfully. Created/added to a private playlist on the channel. Notified video providers of video location.", "Done!");
                 writeEventFileToDisk();
             }
         }
@@ -1683,6 +1699,6 @@ namespace FRCVideoSplitter2
                 matchesList.First(i => i.FIRSTDescription == sVid.match).YouTubeId = sVid.youTube;
                 matchesList.First(i => i.FIRSTDescription == sVid.match).Include = true;
             }
-        }        
+        }
     }
 }
